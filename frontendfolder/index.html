@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pet Adoption Website</title>
+    <link rel="stylesheet" href="landingpage.css">
+    <link rel="shortcut icon" href="logo.jpg" type="image/x-icon">
+    <style>
+       
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <header>
+        <nav>
+            <div class="logo">
+                <img src="logo.jpg" alt="Pet Adoption Logo" width="60" height="60">
+                <h1>Pet Adoption</h1>
+            </div>
+            <ul>
+                <li><a href="#home">Home</a></li>
+                <li><a href="#pets">Adopt</a></li>
+                <li><a href="#donate">Donate</a></li>
+                <li><a href="#volunteer">Volunteer</a></li>
+                <li><a href="#contact">Contact Us</a></li>
+                 <li><a href="admin.html" class="admin-link">Admin</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Hero Section -->
+    <section id="home" class="hero">
+        <h2>Find Your New Best Friend</h2>
+        <p>Browse our available pets and give them a forever home.</p>
+    </section>
+
+    <!-- Cards Section -->
+    <section class="cards-section">
+        <div class="card">
+            <img src="istockphoto-154904591-1024x1024-transformed.jpeg" alt="Adopt a Pet">
+            <h3>Adopt a Pet</h3>
+            <p>Find your perfect companion among our adorable pets waiting for a loving home.</p>
+            <button class="adopt-btn" onclick="location.href='#pets'">Adopt Now</button>
+        </div>
+        <div class="card">
+            <img src="istockphoto-1364253107-1024x1024-transformed.jpeg" alt="Donate to Animals">
+            <h3>Donate to Animals</h3>
+            <p>Your donations help us provide food, shelter, and care for animals in need.</p>
+            <button class="donate-btn" onclick="location.href='#donate'">Donate Now</button>
+        </div>
+        <div class="card">
+            <img src="volunteer image.png" alt="Become a Volunteer" id="volunteer">
+            <h3>Become a Volunteer</h3>
+            <p>Join our team and make a difference in the lives of animals.</p>
+            <button class="volunteer-btn" onclick="location.href='#volunteer'"><a href="volunteer">Sign Up</a></button>
+        </div>
+    </section>
+
+    <!-- Adoptable Pets Section -->
+    <section id="pets" class="pets-section">
+        <h2>Available Pets for Adoption</h2>
+        
+        <!-- Dog Section -->
+        <div class="pet-category">
+            <h3>Dogs</h3>
+            <div class="pet-cards">
+                <div class="pet-card">
+                    <img src="dog1.jpg" alt="Dog 1">
+                    <p>Breed: Labrador | Age: 2 Years</p>
+                    <button class="adopt-btn" onclick="openAdoptForm('Labrador')">Adopt Me</button>
+                </div>
+                <div class="pet-card">
+                    <img src="dog2.jpg" alt="Dog 2">
+                    <p>Breed: Golden Retriever | Age: 1.5 Years</p>
+                    <button class="adopt-btn" onclick="openAdoptForm('Golden Retriever')">Adopt Me</button>
+                </div>
+                <div class="pet-card">
+                    <img src="dog3.jpg" alt="Dog 3">
+                    <p>Breed: Bulldog | Age: 3 Years</p>
+                    <button class="adopt-btn" onclick="openAdoptForm('Bulldog')">Adopt Me</button>
+                </div>
+                <div class="pet-card">
+                    <img src="dog4.jpg" alt="Dog 4">
+                    <p>Breed: Beagle | Age: 4 Years</p>
+                    <button class="adopt-btn" onclick="openAdoptForm('Beagle')">Adopt Me</button>
+                </div>
+                <div class="pet-card">
+                    <img src="dog5.jpg" alt="Dog 5">
+                    <p>Breed: Poodle | Age: 5 Years</p>
+                    <button class="adopt-btn" onclick="openAdoptForm('Poodle')">Adopt Me</button>
+                </div>
+            </div>
+            <button class="explore-more" onclick="location.href='more-dogs'"><a href="more-dogs.html">EXPLORE MORE DOGS</a>
+            </button>
+        </div>
+        
+        </div>
+
+        <!-- Cat Section -->
+        <div class="pet-category">
+            <h3>Cats</h3>
+            <div class="pet-cards">
+                <div class="pet-card">
+                    <img src="cat1.jpg" alt="Cat 1">
+                    <p>Breed: Persian | Age: 3 Years</p>
+                    <button class="adopt-btn" onclick="openAdoptForm('Persian')">Adopt Me</button>
+                </div>
+                <div class="pet-card">
+                    <img src="cat2.jpg" alt="Cat 2">
+                    <p>Breed: Siamese | Age: 2.5 Years</p>
+                    <button class="adopt-btn" onclick="openAdoptForm('Siamese')">Adopt Me</button>
+                </div>
+                <div class="pet-card">
+                    <img src="cat3.jpg" alt="Cat 3">
+                    <p>Breed: Maine Coon | Age: 4 Years</p>
+                    <button class="adopt-btn" onclick="openAdoptForm('Maine Coon')">Adopt Me</button>
+                </div>
+                <div class="pet-card">
+                    <img src="cat4.jpg" alt="Cat 4">
+                    <p>Breed: British Shorthair | Age: 2 Years</p>
+                    <button class="adopt-btn" onclick="openAdoptForm('British Shorthair')">Adopt Me</button>
+                </div>
+                <div class="pet-card">
+                    <img src="cat5.jpg" alt="Cat 5">
+                    <p>Breed: Ragdoll | Age: 3 Years</p>
+                    <button class="adopt-btn" onclick="openAdoptForm('Ragdoll')">Adopt Me</button>
+                </div>
+            </div>
+            <button class="explore-more" onclick="location.href='more-cats'"><a href="more-cats.html">EXPLORE MORE CATS</a>
+            </button>        
+        </div>
+
+    </section>
+
+    <!-- Donate Section -->
+    <section id="donate" class="donate-section">
+        <h2>Support Us</h2>
+        <p>Your donations help us provide care for animals in need. Any contribution is appreciated!</p>
+        <button class="donate-btn" onclick="location.href='DONATEPAGE.HTML'">Donate Now</button>
+    </section>
+
+    <!-- Volunteer Section -->
+    <section id="volunteer" class="volunteer-section">
+        <h2>Join Us as a Volunteer</h2>
+        <p>Help us care for animals by volunteering your time. Become a part of our community!</p>
+        <button class="volunteer-btn" onclick="location.href='SIGNUPPAGE'"><a href="SIGNUPPAGE.html">Sign Up to Volunteer</a> </button>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="contact-section">
+        <h2>Contact Us</h2>
+        <form id="contact-form">
+            <input type="text" id="name" name="name" placeholder="Your Name" required>
+            <input type="email" id="email" name="email" placeholder="Your Email" required>
+            <textarea id="message" name="message" placeholder="Your Message" required></textarea>
+            <button type="submit">Send Message</button>
+        </form>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <p>&copy; 2024 Pet Adoption | All Rights Reserved</p>
+    </footer>
+
+    <!-- Popup Form -->
+    <div class="popup-form" id="adopt-popup">
+        <div class="form-container">
+            <h3>Adopt a Pet: <span id="pet-name"></span></h3>
+            <form id="adopt-form">
+                <input type="text" id="name" name="name" placeholder="Your Name" required>
+                <input type="email" id="email" name="email" placeholder="Your Email" required>
+                <input type="tel" id="mobile" name="mobile" placeholder="Your Mobile Number" required>
+                <button type="submit">Submit</button>
+                <button type="button" class="close-btn" onclick="closeAdoptForm()">Close</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Open adoption form and set pet name
+       // function openAdoptForm(petName) {
+            document.getElementById('pet-name').textContent = petName;
+            document.getElementById('adopt-popup').style.display = 'flex';
+        }
+
+        // Close adoption form
+        function closeAdoptForm() {
+            document.getElementById('adopt-popup').style.display = 'none';
+        }
+
+        // Form submission
+        document.getElementById('adopt-form').onsubmit = function(e) {
+            e.preventDefault();
+            alert('Adoption details submitted successfully!');
+            closeAdoptForm();
+        };
+//
+const contactForm = document.getElementById("contact-form");
+if (contactForm) {
+  contactForm.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    const name = document.getElementById("name").value;
+    const email = document.getElementById("email").value;
+    const message = document.getElementById("message").value;
+
+    const res = await fetch("http://localhost:5000/api/contacts", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ name, email, message }),
+    });
+
+    const data = await res.json();
+    if (data.ok) {
+      alert("Thanks! We got your message.");
+      contactForm.reset();
+    } else {
+      alert("Failed: " + (data.error || "Try again"));
+    }
+  });
+}
+    </script>
+    <script src="landingpage.js"></script>
+</body>
+</html>

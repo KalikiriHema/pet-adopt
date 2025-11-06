@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Volunteer with Us</title>
+    <link rel="stylesheet" href="landingpage.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+
+        section {
+            padding: 20px;
+            max-width: 800px;
+            margin: 20px auto;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        h2 {
+            color: black;
+            text-align: center;
+        }
+
+        .volunteer-list {
+            margin: 20px 0;
+        }
+
+        .volunteer-item {
+            padding: 10px;
+            border: 1px solid black;
+            border-radius: 5px;
+            margin-bottom: 10px;
+        }
+
+        .signup-form {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .signup-form input, 
+        .signup-form textarea {
+            width: 100%;
+            max-width: 400px;
+            margin: 10px 0;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        .signup-form button {
+            padding: 10px;
+            background-color: #007bff;
+            background-color: #ff6347;
+    border: none;
+    color: #fff;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: background-color 0.3s;
+        }
+        .signup-form button:hover{
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15); /* Deeper shadow on hover */
+    transform: translateY(-2px); /* Subtle lift on hover */
+        }
+    </style>
+</head>
+<body>
+       <!-- Navbar -->
+       <header>
+        <nav>
+            <div class="logo">
+                <img src="logo.jpg" alt="Pet Adoption Logo" width="60" height="60">
+                <h1>Pet Adoption</h1>
+            </div>
+            <ul>
+                <li><a href="Landing page.html">Home</a></li>
+                <li><a href="Landing page.html">Adopt</a></li>
+                <li><a href="DONATEPAGE.HTML">Donate</a></li>
+                <li><a href="Landing page.html">Volunteer</a></li>
+                <li><a href="#contact">Contact Us</a></li>
+            </ul>
+        </nav>
+    </header>
+
+
+    <!-- Volunteer Section -->
+    <section id="volunteer">
+        <h2>Join Our Volunteer Program</h2>
+        <p>Your time and skills can make a difference! We welcome volunteers to help us in various capacities.</p>
+
+        <div class="volunteer-list">
+            <h3>Current Volunteer Opportunities</h3>
+            <div class="volunteer-item">
+                <h4>Dog Walker</h4>
+                <p>Help walk our dogs and give them the exercise they need.</p>
+                <p><strong>Time Commitment:</strong> 2 hours per week</p>
+            </div>
+            <div class="volunteer-item">
+                <h4>Foster Care Provider</h4>
+                <p>Provide temporary homes for dogs in need of care.</p>
+                <p><strong>Time Commitment:</strong> Varies based on dog needs</p>
+            </div>
+            <div class="volunteer-item">
+                <h4>Event Volunteer</h4>
+                <p>Assist with our fundraising events and community outreach.</p>
+                <p><strong>Time Commitment:</strong> Flexible</p>
+            </div>
+            <div class="volunteer-item">
+                <h4>Administrative Support</h4>
+                <p>Help with paperwork, data entry, and organization tasks.</p>
+                <p><strong>Time Commitment:</strong> 2-3 hours per week</p>
+            </div>
+        </div>
+
+        <h3>Sign Up to Volunteer</h3>
+        <form class="signup-form" id="signup-form">
+            <input type="text" id="volunteer-name" name="volunteer-name" placeholder="Your Name" required>
+            <input type="email" id="volunteer-email" name="volunteer-email" placeholder="Your Email" required>
+            <input type="tel" id="volunteer-phone" name="volunteer-phone" placeholder="Your Phone Number" required pattern="[0-9]{10}" title="Please enter a valid 10-digit phone number">
+            <textarea id="volunteer-message" name="volunteer-message" placeholder="Tell us how you want to help!" rows="4" required></textarea>
+            <button type="submit">Submit Application</button>
+        </form>
+    </section>
+
+     <!-- Contact Section -->
+     <section id="contact" class="contact-section">
+        <h2>Contact Us</h2>
+        <form id="contact-form">
+            <input type="text" id="name" name="name" placeholder="Your Name" required>
+            <input type="email" id="email" name="email" placeholder="Your Email" required>
+            <textarea id="message" name="message" placeholder="Your Message" required></textarea>
+            <button type="submit">Send Message</button>
+        </form>
+    </section>  
+
+    <!-- Footer -->
+    <footer>
+        <p>&copy; 2024 Dog Adoption Center. All rights reserved.</p>
+    </footer>
+
+  <script>
+    /*const signupForm = document.getElementById('signup-form'); // or your form id
+    signupForm && signupForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const data = {
+    name: document.getElementById('volunteer-name').value,
+    email: document.getElementById('volunteer-email').value,
+    phone: document.getElementById('volunteer-phone').value,
+    message: document.getElementById('volunteer-message').value
+  };
+  try {
+    const res = await fetch('http://localhost:5000/api/signup', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data)
+    });
+    const json = await res.json();
+    if (json.success) 6{
+      // show a friendly toast/modal instead of alert
+      alert('Thanks! Your signup was received.');
+      signupForm.reset();
+    } else {
+      alert(json.error || 'Something went wrong');
+    }
+  } catch (err) {
+    console.error(err);
+    alert('Network error');
+  }
+}); */
+const contactForm = document.getElementById("contact-form");
+if (contactForm) {
+  contactForm.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    const name = document.getElementById("name").value;
+    const email = document.getElementById("email").value;
+    const message = document.getElementById("message").value;
+
+    const res = await fetch("http://localhost:5000/api/contacts", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ name, email, message }),
+    });
+
+    const data = await res.json();
+    if (data.ok) {
+      alert("Thanks! We got your message.");
+      contactForm.reset();
+    } else {
+      alert("Failed: " + (data.error || "Try again"));
+    }
+  });
+}
+
+const signupForm = document.getElementById("signup-form");
+if (signupForm) {
+  signupForm.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    const name = document.getElementById("volunteer-name").value;
+    const email = document.getElementById("volunteer-email").value;
+    const phone = document.getElementById("volunteer-phone").value;
+    const message = document.getElementById("volunteer-message").value;
+
+    const res = await fetch("http://localhost:5000/api/volunteers", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ name, email, phone, message }),
+    });
+
+    const data = await res.json();
+    if (data.ok) {
+      alert("Thank you for signing up to volunteer!");
+      signupForm.reset();
+    } else {
+      alert("Failed: " + (data.error || "Try again"));
+    }
+  });
+}
+
+
+</script>
+
+</body>
+</html>

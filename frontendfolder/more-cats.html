@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cat Adoption Page</title>
+    <link rel="stylesheet" href="landingpage.css">
+    <style>
+        /* Simple CSS for the modal */
+        .modal {
+            display: none; 
+            position: fixed; 
+            z-index: 1; 
+            left: 0;
+            top: 0;
+            width: 100%; 
+            height: 100%; 
+            overflow: auto; 
+            background-color: rgb(0,0,0); 
+            background-color: rgba(0,0,0,0.4); 
+            padding-top: 60px; 
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: 5% auto; 
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%; 
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+   
+      <!-- Navbar -->
+      <header>
+        <nav>
+            <div class="logo">
+                <img src="logo.jpg" alt="Pet Adoption Logo" width="60" height="60">
+                <h1>Pet Adoption</h1>
+            </div>
+            <ul>
+                <li><a href="Landing page.html">Home</a></li>
+                <li><a href="Landing page.html">Adopt</a></li>
+                <li><a href="DONATEPAGE.HTML">Donate</a></li>
+                <li><a href="Landing page.html">Volunteer</a></li>
+                <li><a href="#contact">Contact Us</a></li>
+            </ul>
+        </nav>
+    </header>
+
+
+    <!-- Cat Adoption Section -->
+    <section class="pets-section" id="pets">
+        <h2>Meet Our Cats</h2>
+        <div class="pet-cards">
+            <div class="pet-card">
+                <img src="cat1.jpg" alt="Cat 1">
+                <h3>Cat 1</h3>
+                <p>Breed: Persian | Age: 3 years</p>
+                <button class="adopt-btn" onclick="openAdoptForm('Cat 1')">Adopt Me</button>
+            </div>
+            <div class="pet-card">
+                <img src="cat2.jpg" alt="Cat 2">
+                <h3>Cat 2</h3>
+                <p>Breed: Maine Coon | Age: 2 years</p>
+                <button class="adopt-btn" onclick="openAdoptForm('Cat 2')">Adopt Me</button>
+            </div>
+             <div class="pet-card">
+                <img src="cat3.jpg" alt="Cat 3">
+                <h3>Cat 3</h3>
+                <p>Breed: Siamese | Age: 4 years</p>
+                <button class="adopt-btn" onclick="openAdoptForm('Cat 3')">Adopt Me</button>
+            </div>
+            <div class="pet-card">
+                <img src="cat4.jpg" alt="Cat 4">
+                <h3>Cat 4</h3>
+                <p>Breed: British Shorthair | Age: 3 years</p>
+                <button class="adopt-btn" onclick="openAdoptForm('Cat 4')">Adopt Me</button>
+            </div>
+            <!-- Add more cat cards here up to 20 -->
+            <div class="pet-card">
+                <img src="cat5.jpg" alt="Cat 5">
+                <h3>Cat 5</h3>
+                <p>Breed: Ragdoll | Age: 2 years</p>
+                <button class="adopt-btn" onclick="openAdoptForm('Cat 5')">Adopt Me</button>
+            </div>
+            <div class="pet-card">
+    <img src="cat6.jpg" alt="Cat 6">
+    <h3>Cat 6</h3>
+    <p>Breed: Sphynx | Age: 1 year</p>
+    <button class="adopt-btn" onclick="openAdoptForm('Cat 6')">Adopt Me</button>
+</div>
+<div class="pet-card">
+    <img src="cat7.jpg" alt="Cat 7">
+    <h3>Cat 7</h3>
+    <p>Breed: Bengal | Age: 3 years</p>
+    <button class="adopt-btn" onclick="openAdoptForm('Cat 7')">Adopt Me</button>
+</div>
+<div class="pet-card">
+    <img src="cat8.jpg" alt="Cat 8">
+    <h3>Cat 8</h3>
+    <p>Breed: Russian Blue | Age: 5 years</p>
+    <button class="adopt-btn" onclick="openAdoptForm('Cat 8')">Adopt Me</button>
+</div>
+<div class="pet-card">
+    <img src="cat9.jpg" alt="Cat 9">
+    <h3>Cat 9</h3>
+    <p>Breed: Abyssinian | Age: 2 years</p>
+    <button class="adopt-btn" onclick="openAdoptForm('Cat 9')">Adopt Me</button>
+</div>
+<div class="pet-card">
+    <img src="cat10.jpg" alt="Cat 10">
+    <h3>Cat 10</h3>
+    <p>Breed: Burmese | Age: 3 years</p>
+    <button class="adopt-btn" onclick="openAdoptForm('Cat 10')">Adopt Me</button>
+</div>
+<div class="pet-card">
+    <img src="cat11.jpg" alt="Cat 11">
+    <h3>Cat 11</h3>
+    <p>Breed: Scottish Fold | Age: 4 years</p>
+    <button class="adopt-btn" onclick="openAdoptForm('Cat 11')">Adopt Me</button>
+</div>
+<div class="pet-card">
+    <img src="cat12.jpg" alt="Cat 12">
+    <h3>Cat 12</h3>
+    <p>Breed: American Shorthair | Age: 2 years</p>
+    <button class="adopt-btn" onclick="openAdoptForm('Cat 12')">Adopt Me</button>
+</div>
+<div class="pet-card">
+    <img src="cat13.jpg" alt="Cat 13">
+    <h3>Cat 13</h3>
+    <p>Breed: Chartreux | Age: 5 years</p>
+    <button class="adopt-btn" onclick="openAdoptForm('Cat 13')">Adopt Me</button>
+</div>
+<div class="pet-card">
+    <img src="cat14.jpg" alt="Cat 14">
+    <h3>Cat 14</h3>
+    <p>Breed: Devon Rex | Age: 1 year</p>
+    <button class="adopt-btn" onclick="openAdoptForm('Cat 14')">Adopt Me</button>
+</div>
+<div class="pet-card">
+    <img src="cat15.jpg" alt="Cat 15">
+    <h3>Cat 15</h3>
+    <p>Breed: Oriental Shorthair | Age: 4 years</p>
+    <button class="adopt-btn" onclick="openAdoptForm('Cat 15')">Adopt Me</button>
+</div>
+<div class="pet-card">
+    <img src="cat16.jpg" alt="Cat 16">
+    <h3>Cat 16</h3>
+    <p>Breed: Cornish Rex | Age: 3 years</p>
+    <button class="adopt-btn" onclick="openAdoptForm('Cat 16')">Adopt Me</button>
+</div>
+<div class="pet-card">
+    <img src="cat17.jpg" alt="Cat 17">
+    <h3>Cat 17</h3>
+    <p>Breed: Manx | Age: 2 years</p>
+    <button class="adopt-btn" onclick="openAdoptForm('Cat 17')">Adopt Me</button>
+</div>
+<div class="pet-card">
+    <img src="cat18.jpg" alt="Cat 18">
+    <h3>Cat 18</h3>
+    <p>Breed: Turkish Angora | Age: 4 years</p>
+    <button class="adopt-btn" onclick="openAdoptForm('Cat 18')">Adopt Me</button>
+</div>
+<div class="pet-card">
+    <img src="cat19.jpg" alt="Cat 19">
+    <h3>Cat 19</h3>
+    <p>Breed: Balinese | Age: 3 years</p>
+    <button class="adopt-btn" onclick="openAdoptForm('Cat 19')">Adopt Me</button>
+</div>
+<div class="pet-card">
+    <img src="cat20.jpg" alt="Cat 20">
+    <h3>Cat 20</h3>
+    <p>Breed: Egyptian Mau | Age: 2 years</p>
+    <button class="adopt-btn" onclick="openAdoptForm('Cat 20')">Adopt Me</button>
+</div>
+
+            <!-- Add more cat cards here -->
+        </div>
+    </section>
+
+    <!-- Popup Form -->
+    <div class="popup-form" id="adopt-popup">
+        <div class="form-container">
+            <h3>Adopt a Pet: <span id="pet-name"></span></h3>
+            <form id="adopt-form">
+                <input type="text" id="name" name="name" placeholder="Your Name" required>
+                <input type="email" id="email" name="email" placeholder="Your Email" required>
+                <input type="tel" id="mobile" name="mobile" placeholder="Your Mobile Number" required>
+                <button type="submit">Submit</button>
+                <button type="button" class="close-btn" onclick="closeAdoptForm()">Close</button>
+            </form>
+        </div>
+    </div>
+
+    
+    <!-- Footer -->
+    <footer>
+        <p>&copy; 2024 Cat Adoption Center. All rights reserved.</p>
+    </footer>
+    </div>
+    <script>
+        // Open adoption form and set pet name
+       // function openAdoptForm(petName) {
+            document.getElementById('pet-name').textContent = petName;
+            document.getElementById('adopt-popup').style.display = 'flex';
+        }
+
+        // Close adoption form
+        function closeAdoptForm() {
+            document.getElementById('adopt-popup').style.display = 'none';
+        }
+
+        // Form submission
+        document.getElementById('adopt-form').onsubmit = function(e) {
+            e.preventDefault();
+            alert('Adoption details submitted successfully!');
+            closeAdoptForm();
+        };//
+        const contactForm = document.getElementById("contact-form");
+if (contactForm) {
+  contactForm.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    const name = document.getElementById("name").value;
+    const email = document.getElementById("email").value;
+    const message = document.getElementById("message").value;
+
+    const res = await fetch("http://localhost:5000/api/contacts", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ name, email, message }),
+    });
+
+    const data = await res.json();
+    if (data.ok) {
+      alert("Thanks! We got your message.");
+      contactForm.reset();
+    } else {
+      alert("Failed: " + (data.error || "Try again"));
+    }
+  });
+}
+
+    </script>
+    
+</body>
+</html>

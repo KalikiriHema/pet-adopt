@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dog Adoption Page</title>
+    <link rel="stylesheet" href="landingpage.css">
+    <style>
+        /* Simple CSS for the modal */
+        .modal {
+            display: none; 
+            position: fixed; 
+            z-index: 1; 
+            left: 0;
+            top: 0;
+            width: 100%; 
+            height: 100%; 
+            overflow: auto; 
+            background-color: rgb(0,0,0); 
+            background-color: rgba(0,0,0,0.4); 
+            padding-top: 60px; 
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: 5% auto; 
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%; 
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+   
+       <!-- Navbar -->
+       <header>
+        <nav>
+            <div class="logo">
+                <img src="logo.jpg" alt="Pet Adoption Logo" width="60" height="60">
+                <h1>Pet Adoption</h1>
+            </div>
+            <ul>
+                <li><a href="Landing page.html">Home</a></li>
+                <li><a href="Landing page.html">Adopt</a></li>
+                <li><a href="DONATEPAGE.HTML">Donate</a></li>
+                <li><a href="Landing page.html">Volunteer</a></li>
+                <li><a href="#contact">Contact Us</a></li>
+            </ul>
+        </nav>
+    </header>
+
+
+    <!-- Dog Adoption Section -->
+    <section class="pets-section" id="dogs">
+        <h2>Meet Our Dogs</h2>
+        <div class="pet-cards">
+            <div class="pet-card">
+                <img src="dog1.jpg" alt="Dog 1">
+                <h3>Dog 1</h3>
+                <p>Breed: Labrador | Age: 3 years</p>
+                <button class="adopt-btn" onclick="openAdoptForm('Dog 1')">Adopt Me</button>
+            </div>
+            <div class="pet-card">
+                <img src="dog2.jpg" alt="Dog 2">
+                <h3>Dog 2</h3>
+                <p>Breed: German Shepherd | Age: 2 years</p>
+                <button class="adopt-btn" onclick="openAdoptForm('Dog 2')">Adopt Me</button>
+            </div>
+            <div class="pet-card">
+                <img src="dog3.jpg" alt="Dog 3">
+                <h3>Dog 3</h3>
+                <p>Breed: Beagle | Age: 4 years</p>
+                <button class="adopt-btn" onclick="openAdoptForm('Dog 3')">Adopt Me</button>
+            </div>
+            <div class="pet-card">
+                <img src="dog4.jpg" alt="Dog 4">
+                <h3>Dog 4</h3>
+                <p>Breed: Bulldog | Age: 3 years</p>
+                <button class="adopt-btn" onclick="openAdoptForm('Dog 4')">Adopt Me</button>
+            </div>
+            <div class="pet-card">
+                <img src="dog5.jpg" alt="Dog 5">
+                <h3>Dog 5</h3>
+                <p>Breed: Poodle | Age: 2 years</p>
+                <button class="adopt-btn" onclick="openAdoptForm('Dog 5')">Adopt Me</button>
+            </div>
+            <div class="pet-card">
+                <img src="dog6.jpg" alt="Dog 6">
+                <h3>Dog 6</h3>
+                <p>Breed: Golden Retriever | Age: 1 year</p>
+                <button class="adopt-btn" onclick="openAdoptForm('Dog 6')">Adopt Me</button>
+            </div>
+            <div class="pet-card">
+                <img src="dog7.jpg" alt="Dog 7">
+                <h3>Dog 7</h3>
+                <p>Breed: Rottweiler | Age: 3 years</p>
+                <button class="adopt-btn" onclick="openAdoptForm('Dog 7')">Adopt Me</button>
+            </div>
+            <div class="pet-card">
+                <img src="dog8.jpg" alt="Dog 8">
+                <h3>Dog 8</h3>
+                <p>Breed: Boxer | Age: 5 years</p>
+                <button class="adopt-btn" onclick="openAdoptForm('Dog 8')">Adopt Me</button>
+            </div>
+            <div class="pet-card">
+                <img src="dog9.jpg" alt="Dog 9">
+                <h3>Dog 9</h3>
+                <p>Breed: Dachshund | Age: 2 years</p>
+                <button class="adopt-btn" onclick="openAdoptForm('Dog 9')">Adopt Me</button>
+            </div>
+            <div class="pet-card">
+                <img src="dog10.jpg" alt="Dog 10">
+                <h3>Dog 10</h3>
+                <p>Breed: Cocker Spaniel | Age: 3 years</p>
+                <button class="adopt-btn" onclick="openAdoptForm('Dog 10')">Adopt Me</button>
+            </div>
+            <div class="pet-card">
+                <img src="dog11.jpg" alt="Dog 11">
+                <h3>Dog 11</h3>
+                <p>Breed: Chihuahua | Age: 4 years</p>
+                <button class="adopt-btn" onclick="openAdoptForm('Dog 11')">Adopt Me</button>
+            </div>
+            <div class="pet-card">
+                <img src="dog12.jpg" alt="Dog 12">
+                <h3>Dog 12</h3>
+                <p>Breed: Shih Tzu | Age: 2 years</p>
+                <button class="adopt-btn" onclick="openAdoptForm('Dog 12')">Adopt Me</button>
+            </div>
+            <div class="pet-card">
+                <img src="dog13.jpg" alt="Dog 13">
+                <h3>Dog 13</h3>
+                <p>Breed: Border Collie | Age: 5 years</p>
+                <button class="adopt-btn" onclick="openAdoptForm('Dog 13')">Adopt Me</button>
+            </div>
+            <div class="pet-card">
+                <img src="dog14.jpg" alt="Dog 14">
+                <h3>Dog 14</h3>
+                <p>Breed: Pug | Age: 1 year</p>
+                <button class="adopt-btn" onclick="openAdoptForm('Dog 14')">Adopt Me</button>
+            </div>
+            <div class="pet-card">
+                <img src="dog15.jpg" alt="Dog 15">
+                <h3>Dog 15</h3>
+                <p>Breed: Australian Shepherd | Age: 4 years</p>
+                <button class="adopt-btn" onclick="openAdoptForm('Dog 15')">Adopt Me</button>
+            </div>
+            <div class="pet-card">
+                <img src="dog16.jpg" alt="Dog 16">
+                <h3>Dog 16</h3>
+                <p>Breed: Dalmatian | Age: 3 years</p>
+                <button class="adopt-btn" onclick="openAdoptForm('Dog 16')">Adopt Me</button>
+            </div>
+            <div class="pet-card">
+                <img src="dog17.jpg" alt="Dog 17">
+                <h3>Dog 17</h3>
+                <p>Breed: Schnauzer | Age: 2 years</p>
+                <button class="adopt-btn" onclick="openAdoptForm('Dog 17')">Adopt Me</button>
+            </div>
+            <div class="pet-card">
+                <img src="dog18.jpg" alt="Dog 18">
+                <h3>Dog 18</h3>
+                <p>Breed: Husky | Age: 3 years</p>
+                <button class="adopt-btn" onclick="openAdoptForm('Dog 18')">Adopt Me</button>
+            </div>
+            <div class="pet-card">
+                <img src="dog19.jpg" alt="Dog 19">
+                <h3>Dog 19</h3>
+                <p>Breed: Maltese | Age: 4 years</p>
+                <button class="adopt-btn" onclick="openAdoptForm('Dog 19')">Adopt Me</button>
+            </div>
+            <div class="pet-card">
+                <img src="dog20.jpg" alt="Dog 20">
+                <h3>Dog 20</h3>
+                <p>Breed: Great Dane | Age: 5 years</p>
+                <button class="adopt-btn" onclick="openAdoptForm('Dog 20')">Adopt Me</button>
+            </div>
+        </div>
+    </section>
+    <section id="contact" class="contact-section">
+        <h2>Contact Us</h2>
+        <form id="contact-form">
+            <input type="text" id="name" name="name" placeholder="Your Name" required>
+            <input type="email" id="email" name="email" placeholder="Your Email" required>
+            <textarea id="message" name="message" placeholder="Your Message" required></textarea>
+            <button type="submit">Send Message</button>
+        </form>
+    </section>
+ <!-- Footer -->
+    <footer>
+        <p>&copy; 2024 Pet Adoption | All Rights Reserved</p>
+    </footer>
+<!-- Popup Form -->
+<div class="popup-form" id="adopt-popup">
+    <div class="form-container">
+        <h3>Adopt a Pet: <span id="pet-name"></span></h3>
+        <form id="adopt-form">
+            <input type="text" id="name" name="name" placeholder="Your Name" required>
+            <input type="email" id="email" name="email" placeholder="Your Email" required>
+            <input type="tel" id="mobile" name="mobile" placeholder="Your Mobile Number" required>
+            <button type="submit">Submit</button>
+            <button type="button" class="close-btn" onclick="closeAdoptForm()">Close</button>
+        </form>
+    </div>
+</div>
+
+<script>
+    // Open adoption form and set pet name
+    //function openAdoptForm(petName) {
+        document.getElementById('pet-name').textContent = petName;
+        document.getElementById('adopt-popup').style.display = 'flex';
+    }
+
+    // Close adoption form
+    function closeAdoptForm() {
+        document.getElementById('adopt-popup').style.display = 'none';
+    }
+
+    // Form submission
+    document.getElementById('adopt-form').onsubmit = function(e) {
+        e.preventDefault();
+        alert('Adoption details submitted successfully!');
+        closeAdoptForm();
+    };//
+    const contactForm = document.getElementById("contact-form");
+if (contactForm) {
+  contactForm.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    const name = document.getElementById("name").value;
+    const email = document.getElementById("email").value;
+    const message = document.getElementById("message").value;
+
+    const res = await fetch("http://localhost:5000/api/contacts", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ name, email, message }),
+    });
+
+    const data = await res.json();
+    if (data.ok) {
+      alert("Thanks! We got your message.");
+      contactForm.reset();
+    } else {
+      alert("Failed: " + (data.error || "Try again"));
+    }
+  });
+}
+
+</script>
+</body>
+</html>
