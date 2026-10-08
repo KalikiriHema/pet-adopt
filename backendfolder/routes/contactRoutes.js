@@ -1,28 +1,25 @@
 import express from "express";
-import Contact from "../models/Contact.js";
+import {
+  getContacts,
+  createContact,
+  updateContactStatus,
+  deleteContact,
+} from "../controllers/contactController.js";
 import { verifyAdmin } from "../middleware/authMiddleware.js";
-
+import { apiLimiter } from "../middleware/rateLimiter.js";
 
 const router = express.Router();
 
-// GET all contact messages
-router.get("/", verifyAdmin, async (req, res) => {
-  try {
-    const contacts = await Contact.find();
-    res.status(200).json({ ok: true, data: contacts });
-  } catch (error) {
-    res.status(500).json({ ok: false, error: error.message });
-  }
-});
+// GET all contacts (Admin protected)
+router.get("/", verifyAdmin, getContacts);
 
-// POST a new contact
-router.post("/", async (req, res) => {
-  try {
-    const contact = await Contact.create(req.body);
-    res.status(201).json({ ok: true, data: contact });
-  } catch (error) {
-    res.status(400).json({ ok: false, error: error.message });
-  }
-});
+// POST a new contact inquiry (Public with rate limiting)
+router.post("/", apiLimiter, createContact);
+
+// PATCH contact status (Admin protected)
+router.patch("/:id/status", verifyAdmin, updateContactStatus);
+
+// DELETE contact (Admin protected)
+router.delete("/:id", verifyAdmin, deleteContact);
 
 export default router;

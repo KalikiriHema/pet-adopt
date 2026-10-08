@@ -1,165 +1,99 @@
-# 🐾 Pet Adoption Website
+# 🐾 Pet Adoption Web Application (MERN Stack)
 
-A full-stack **Pet Adoption Web Application** built using **HTML, CSS, JavaScript (Frontend)** and **Node.js, Express, MongoDB (Backend)**.  
-
-This platform enables users to browse pets available for adoption, donate funds or supplies, volunteer for animal welfare, and contact the team.  
-Admins can monitor all donations, volunteers, and contact requests through an interactive dashboard.
-
----
-
-## 🚀 Live Demo (To Be Updated After Deployment)
-- 🌐 **Frontend:** [https://takeyourpet.netlify.app/]
-- ⚙️ **Backend API:** [https://pet-adopt-1-ausg.onrender.com]
-- 💻 **GitHub Repo:** [https://github.com/KalikiriHema/pet-adoption-project](#)
+A production-grade, full-stack **MERN Application (MongoDB, Express.js, React.js, Node.js)** for pet adoption, item/monetary donations, volunteer recruitment, and administrative operations.
 
 ---
 
 ## 🧩 Tech Stack
 
-**Frontend:**
-- HTML5  
-- CSS3  
-- JavaScript (Vanilla JS)
-
-**Backend:**
-- Node.js  
-- Express.js  
-- MongoDB (Mongoose ODM)
-
-**Other Tools:**
-- Netlify (Frontend Deployment)  
-- Render (Backend Deployment)  
-- Postman (API Testing)  
-- Git & GitHub (Version Control)
-
----
-
-## ✨ Key Features
-
-| Feature | Description |
-|----------|-------------|
-| 🏠 **Landing Page** | Displays adoption, donation, and volunteer options |
-| 🐶 **Pet Listings** | Showcases available pets with details (breed, age) |
-| 💰 **Donations** | Users can donate money or items through structured forms |
-| 🤝 **Volunteer Signup** | Register as a volunteer for helping animals |
-| 👩‍💼 **Admin Dashboard** | Displays volunteer and donation records |
-| 📧 **Contact Form** | Sends inquiries directly to the backend |
-| 🔒 **JWT Authentication (Planned)** | Secure admin access (upcoming feature) |
+* **Frontend:** React 19, React Router v7, Vite, Vanilla CSS3 (Custom Design System)
+* **Backend:** Node.js (ES Modules), Express.js v5
+* **Database:** MongoDB & Mongoose ODM
+* **Security & Middleware:** Helmet, CORS, Express Rate Limit, JSON Web Tokens (JWT), BcryptJS
+* **Version Control:** Git & GitHub
 
 ---
 
 ## 🗂️ Project Structure
-  wtPrjFolder/
-│
-├── frontend/
-│ ├── index.html
-│ ├── DONATEPAGE.html
-│ ├── SIGNUPPAGE.html
-│ ├── admin.html
-│ ├── landingpage.css
-│ ├── landingpage.js
-│ ├── more-cats.html
-│ ├── more-dogs.html
-│ └── images/
-│
-├── backendfolder/
-│ ├── middleware/
-│ │ └── authMiddleware.js
-│ ├── models/
-│ ├── routes/
-│ ├── .env
-│ ├── package.json
-│ └── server.js
-│
-├── .gitignore
-└── README.md
 
-  
+```text
+pet-adopt/
+├── backendfolder/                 # Express.js, Node.js & MongoDB Backend
+│   ├── config/
+│   │   └── db.js                  # Database connection logic
+│   ├── controllers/
+│   │   ├── adminController.js     # Admin authentication
+│   │   ├── adoptionController.js  # Adoption submissions & queries
+│   │   ├── contactController.js   # Inquiry messaging
+│   │   ├── donationController.js  # Item & monetary donation logic
+│   │   └── volunteerController.js # Volunteer sign up
+│   ├── middleware/
+│   │   ├── authMiddleware.js      # JWT authentication guard
+│   │   ├── errorHandler.js        # Global 404 & error handlers
+│   │   └── rateLimiter.js         # Rate limiting for auth & public endpoints
+│   ├── models/
+│   │   ├── Adoption.js            # Adoption Mongoose model
+│   │   ├── Contact.js             # Contact Mongoose model
+│   │   ├── Donation.js            # Donation Mongoose model
+│   │   └── Volunteer.js           # Volunteer Mongoose model
+│   ├── routes/                    # Modular Express routes
+│   ├── .env.example               # Backend environment template
+│   ├── server.js                  # Backend entry point
+│   └── package.json
+│
+└── frontend/                      # ⚛️ React Single Page Application (Vite)
+    ├── public/                    # 48+ original dog, cat, hero, and logo image assets
+    ├── src/
+    │   ├── components/            # Navbar, Footer, AdoptModal, DonateModal, ContactSection
+    │   ├── pages/                 # HomePage, DonatePage, VolunteerPage, MoreDogs, MoreCats, Admin
+    │   ├── api.js                 # Dynamic API URL resolver
+    │   ├── index.css              # Consolidated stylesheet preserving 100% original design
+    │   ├── App.jsx                # Router definition
+    │   └── main.jsx               # React DOM Root
+    ├── index.html                 # Single HTML Entrypoint
+    └── package.json
+```
+
 ---
 
-## 🧠 How to Run Locally
+## 🚀 How to Run Locally
 
 ### 1️⃣ Clone the Repository
 ```bash
 git clone https://github.com/KalikiriHema/pet-adoption-project.git
 cd pet-adoption-project
+```
 
-##run the backend
+### 2️⃣ Run the Backend
+```bash
 cd backendfolder
 npm install
 npm run dev
+```
+*Backend runs on: `http://localhost:5000`*
 
-##create a .env file
-MONGO_URI=your_mongodb_connection
-PORT=5000
-JWT_SECRET=your_secret_key
-
-🧪 API Endpoints
-Method	Endpoint	Description
-GET	/api/donations	Fetch all donations
-POST	/api/donations/item	Add an item donation
-POST	/api/donations/money	Add a monetary donation
-POST	/api/contacts	Submit a contact message
-POST	/api/volunteers	Register as a volunteer
-GET	/api/volunteers	Retrieve volunteer data
-📊 Deployment Details
-Component	Platform	URL
-Frontend	Netlify	https://petadoption-hema.netlify.app
-
-Backend	Render	https://petadoption-backend.onrender.com
-
-Database	MongoDB Atlas	Private (secured via .env)
-🧾 Future Enhancements
-
-Implement full Admin Login System with JWT
-
-Add Payment Gateway Integration (Razorpay / Stripe)
-
-Enable Adoption Request Tracking
-
-Create User Profiles and Pet History
-
-Improve UI responsiveness and animations
-
-📸 Screenshots (To Add After Deployment)
-Page	Preview
-Landing Page	
-
-Donation Page	
-
-Volunteer Form	
-
-Admin Dashboard	
-🧰 Tools & Libraries Used
-Tool	Purpose
-express	Backend routing
-mongoose	Database modeling
-cors	Cross-origin support
-dotenv	Environment variables
-morgan	Request logging
-nodemon	Auto server reload in dev mode
-
-  ⭐ If you like this project, don’t forget to star the repository on GitHub!
-
+### 3️⃣ Run the React Frontend
+Open a second terminal window:
+```bash
+cd frontend
+npm install
+npm run dev
+```
+*Frontend runs on: `http://localhost:3000`*
 
 ---
 
-✅ **What to Do Now:**
-1. Open VS Code → In your main folder (`wtPrjFolder`)
-2. Create a file named:
-  3. Paste everything above.
-4. Save (`Ctrl + S`).
-5. Then commit and publish your project to GitHub (as explained earlier).
+## 🧪 API Endpoints
 
----
-
-Once this is uploaded, your GitHub repository will have:
-- A **clean folder structure**
-- A **beautifully formatted README**
-- Professional project documentation that looks like a real portfolio project.
-
----
-
-
-
-
+| Method | Endpoint | Access | Description |
+| :--- | :--- | :--- | :--- |
+| `POST` | `/api/admin/login` | Public | Authenticate admin & receive JWT |
+| `GET` | `/api/adoptions` | Admin | Fetch all adoption requests |
+| `POST` | `/api/adoptions` | Public | Submit a new pet adoption inquiry |
+| `GET` | `/api/donations` | Admin | Fetch all monetary & item donations |
+| `POST` | `/api/donations/money` | Public | Record a monetary donation |
+| `POST` | `/api/donations/item` | Public | Record an item/supply donation |
+| `GET` | `/api/volunteers` | Admin | Retrieve volunteer submissions |
+| `POST` | `/api/volunteers` | Public | Register as a volunteer |
+| `GET` | `/api/contacts` | Admin | Retrieve contact messages |
+| `POST` | `/api/contacts` | Public | Submit a contact message |

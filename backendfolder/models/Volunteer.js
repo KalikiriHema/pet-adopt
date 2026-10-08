@@ -2,12 +2,37 @@ import mongoose from "mongoose";
 
 const volunteerSchema = new mongoose.Schema(
   {
-    name: String,
-    email: String,
-    phone: String,
-    message: String,
+    name: {
+      type: String,
+      required: [true, "Name is required"],
+      trim: true
+    },
+    email: {
+      type: String,
+      required: [true, "Email is required"],
+      trim: true,
+      lowercase: true,
+      match: [/^\S+@\S+\.\S+$/, "Please provide a valid email address"]
+    },
+    phone: {
+      type: String,
+      required: [true, "Phone number is required"],
+      trim: true
+    },
+    message: {
+      type: String,
+      required: [true, "Message is required"],
+      trim: true
+    },
+    status: {
+      type: String,
+      enum: ["pending", "accepted", "contacted"],
+      default: "pending"
+    }
   },
-  { timestamps: true }
+  { timestamps: true, bufferCommands: false }
 );
+
+volunteerSchema.index({ createdAt: -1 });
 
 export default mongoose.model("Volunteer", volunteerSchema);

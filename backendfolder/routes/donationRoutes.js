@@ -1,58 +1,35 @@
 import express from "express";
-import Donation from "../models/Donation.js";
+import {
+  getDonations,
+  createMoneyDonation,
+  createItemDonation,
+} from "../controllers/donationController.js";
 import { verifyAdmin } from "../middleware/authMiddleware.js";
+import { apiLimiter } from "../middleware/rateLimiter.js";
+import Donation from "../models/Donation.js";
 
 const router = express.Router();
 
-// GET all donations
-// router.get("/", async (req, res) => {
-//   try {
-//     const donations = await Donation.find();
-//     res.status(200).json({ ok: true, data: donations });
-//   } catch (error) {
-//     res.status(500).json({ ok: false, error: error.message });
-//   }
-// });
+// GET all donations (Admin protected)
+router.get("/", verifyAdmin, getDonations);
 
+// POST money donation (Public with rate limiting)
+router.post("/money", apiLimiter, createMoneyDonation);
 
+// POST item donation (Public with rate limiting)
+router.post("/item", apiLimiter, createItemDonation);
 
-router.get("/", verifyAdmin, async (req, res) => {
-  const donations = await Donation.find();
-  res.status(200).json({ ok: true, data: donations });
-});
-
-
-// POST money donation
-router.post("/money", async (req, res) => {
+// DELETE donation (Admin protected)
+router.delete("/:id", verifyAdmin, async (req, res) => {
   try {
-    const { amount, name, email } = req.body;
-    const donation = await Donation.create({
-      type: "money",
-      amount,
-      donorName: name,
-      donorEmail: email,
-    });
-    res.status(201).json({ ok: true, data: donation });
+    const { id } = req.params;
+    const deleted = await Donation.findByIdAndDelete(id);
+    if (!deleted) {
+      return res.status(404).json({ ok: false, error: "Donation not found" });
+    }
+    res.status(200).json({ ok: true, message: "Donation record deleted" });
   } catch (error) {
-    res.status(400).json({ ok: false, error: error.message });
-  }
-});
-
-// POST item donation
-router.post("/item", async (req, res) => {
-  try {
-    const { item, quantity, description, name, email } = req.body;
-    const donation = await Donation.create({
-      type: "item",
-      item,
-      quantity,
-      description,
-      donorName: name,
-      donorEmail: email,
-    });
-    res.status(201).json({ ok: true, data: donation });
-  } catch (error) {
-    res.status(400).json({ ok: false, error: error.message });
+    res.status(500).json({ ok: false, error: error.message });
   }
 });
 
