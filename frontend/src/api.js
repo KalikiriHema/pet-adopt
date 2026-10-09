@@ -1,6 +1,8 @@
 const API_BASE_URL =
-  window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1"
+  import.meta.env.VITE_API_BASE_URL ||
+  (typeof window !== "undefined" &&
+  (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1")
     ? "http://localhost:5000"
-    : "https://pet-adopt-1-ausg.onrender.com";
+    : "https://pet-adopt-1-ausg.onrender.com");
 
 export default API_BASE_URL;
