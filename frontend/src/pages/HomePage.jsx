@@ -1,40 +1,93 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useEffect, useMemo, useCallback } from "react";
 import { Link } from "react-router-dom";
+import API_BASE_URL from "../api";
 import ContactSection from "../components/ContactSection";
 import AdoptModal from "../components/AdoptModal";
 import TrackApplicationModal from "../components/TrackApplicationModal";
+
+const DEFAULT_DOGS = [
+  { id: "DOG-101", breed: "Labrador Retriever", age: "2 Years", img: "/dog1.jpg" },
+  { id: "DOG-102", breed: "Golden Retriever", age: "1.5 Years", img: "/dog2.jpg" },
+  { id: "DOG-103", breed: "English Bulldog", age: "3 Years", img: "/dog3.jpg" },
+  { id: "DOG-104", breed: "Beagle", age: "4 Years", img: "/dog4.jpg" },
+  { id: "DOG-105", breed: "Standard Poodle", age: "5 Years", img: "/dog5.jpg" },
+];
+
+const DEFAULT_CATS = [
+  { id: "CAT-101", breed: "Persian Cat", age: "3 Years", img: "/cat1.jpg" },
+  { id: "CAT-102", breed: "Siamese Cat", age: "2.5 Years", img: "/cat2.jpg" },
+  { id: "CAT-103", breed: "Maine Coon", age: "4 Years", img: "/cat3.jpg" },
+  { id: "CAT-104", breed: "British Shorthair", age: "2 Years", img: "/cat4.jpg" },
+  { id: "CAT-105", breed: "Ragdoll Cat", age: "3 Years", img: "/cat5.jpg" },
+];
 
 export default function HomePage() {
   const [selectedPet, setSelectedPet] = useState(null);
   const [trackModalOpen, setTrackModalOpen] = useState(false);
   const [petSearch, setPetSearch] = useState("");
+  const [dogs, setDogs] = useState(DEFAULT_DOGS);
+  const [cats, setCats] = useState(DEFAULT_CATS);
 
-  const dogs = [
-    { id: "DOG-101", name: "Labrador", breed: "Labrador Retriever", age: "2 Years", img: "/dog1.jpg" },
-    { id: "DOG-102", name: "Golden Retriever", breed: "Golden Retriever", age: "1.5 Years", img: "/dog2.jpg" },
-    { id: "DOG-103", name: "Bulldog", breed: "English Bulldog", age: "3 Years", img: "/dog3.jpg" },
-    { id: "DOG-104", name: "Beagle", breed: "Beagle", age: "4 Years", img: "/dog4.jpg" },
-    { id: "DOG-105", name: "Poodle", breed: "Standard Poodle", age: "5 Years", img: "/dog5.jpg" },
-  ];
+  const fetchPets = useCallback(async () => {
+    let customPets = [];
+    try {
+      const saved = localStorage.getItem("admin_custom_pets");
+      if (saved) customPets = JSON.parse(saved);
+    } catch {}
 
-  const cats = [
-    { id: "CAT-101", name: "Persian", breed: "Persian Cat", age: "3 Years", img: "/cat1.jpg" },
-    { id: "CAT-102", name: "Siamese", breed: "Siamese Cat", age: "2.5 Years", img: "/cat2.jpg" },
-    { id: "CAT-103", name: "Maine Coon", breed: "Maine Coon", age: "4 Years", img: "/cat3.jpg" },
-    { id: "CAT-104", name: "British Shorthair", breed: "British Shorthair", age: "2 Years", img: "/cat4.jpg" },
-    { id: "CAT-105", name: "Ragdoll", breed: "Ragdoll Cat", age: "3 Years", img: "/cat5.jpg" },
-  ];
+    try {
+      const res = await fetch(`${API_BASE_URL}/api/pets`);
+      const json = await res.json();
+      if (json.ok && Array.isArray(json.data) && json.data.length > 0) {
+        const fetchedPets = json.data.map((p) => ({
+          id: p.petId || p._id,
+          name: p.name,
+          breed: p.breed,
+          type: p.type,
+          age: p.age,
+          img: p.img || (p.type?.toLowerCase() === "cat" ? "/cat1.jpg" : "/dog1.jpg"),
+          status: p.status || "available",
+        }));
+
+        const fetchedDogs = fetchedPets.filter((p) => (p.type || "").toLowerCase() === "dog");
+        const fetchedCats = fetchedPets.filter((p) => (p.type || "").toLowerCase() === "cat");
+
+        if (fetchedDogs.length > 0) setDogs(fetchedDogs);
+        if (fetchedCats.length > 0) setCats(fetchedCats);
+        return;
+      }
+    } catch {
+      // Fallback to local admin pets if server offline
+    }
+
+    if (customPets && customPets.length > 0) {
+      const cDogs = customPets.filter((p) => (p.type || "").toLowerCase() === "dog");
+      const cCats = customPets.filter((p) => (p.type || "").toLowerCase() === "cat");
+      if (cDogs.length > 0) setDogs(cDogs);
+      if (cCats.length > 0) setCats(cCats);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchPets();
+    window.addEventListener("petsUpdated", fetchPets);
+    window.addEventListener("storage", fetchPets);
+    return () => {
+      window.removeEventListener("petsUpdated", fetchPets);
+      window.removeEventListener("storage", fetchPets);
+    };
+  }, [fetchPets]);
 
   const filteredDogs = useMemo(() => {
     if (!petSearch.trim()) return dogs;
-    const q = petSearch.toLowerCase();
-    return dogs.filter((d) => d.name.toLowerCase().includes(q) || d.breed.toLowerCase().includes(q) || d.id.toLowerCase().includes(q));
+    const q = petSearch.toLowerCase().trim();
+    return dogs.filter((d) => (d.breed && d.breed.toLowerCase().includes(q)) || (d.id && d.id.toLowerCase().includes(q)));
   }, [dogs, petSearch]);
 
   const filteredCats = useMemo(() => {
     if (!petSearch.trim()) return cats;
-    const q = petSearch.toLowerCase();
-    return cats.filter((c) => c.name.toLowerCase().includes(q) || c.breed.toLowerCase().includes(q) || c.id.toLowerCase().includes(q));
+    const q = petSearch.toLowerCase().trim();
+    return cats.filter((c) => (c.breed && c.breed.toLowerCase().includes(q)) || (c.id && c.id.toLowerCase().includes(q)));
   }, [cats, petSearch]);
 
   return (
@@ -157,11 +210,11 @@ export default function HomePage() {
             <div className="pet-cards">
               {filteredDogs.slice(0, 4).map((dog, idx) => (
                 <div className="pet-card" key={idx}>
-                  <img src={dog.img} alt={dog.name} />
+                  <img src={dog.img} alt={dog.breed} />
                   <span className="pet-id-tag">{dog.id}</span>
-                  <h4 style={{ margin: "4px 0 2px 0", fontSize: "1.1rem" }}>{dog.name}</h4>
-                  <p style={{ margin: "2px 0 8px 0" }}>Breed: {dog.breed} | Age: {dog.age}</p>
-                  <button className="adopt-btn" onClick={() => setSelectedPet(`${dog.id} - ${dog.name}`)}>
+                  <h4 style={{ margin: "4px 0 2px 0", fontSize: "1.15rem", fontWeight: "800", color: "#1e293b" }}>{dog.breed}</h4>
+                  <p style={{ margin: "2px 0 8px 0", color: "#64748b", fontSize: "0.88rem", fontWeight: "600" }}>Age: {dog.age}</p>
+                  <button className="adopt-btn" onClick={() => setSelectedPet(`${dog.id} - ${dog.breed}`)}>
                     Adopt Me
                   </button>
                 </div>
@@ -182,11 +235,11 @@ export default function HomePage() {
             <div className="pet-cards">
               {filteredCats.slice(0, 4).map((cat, idx) => (
                 <div className="pet-card" key={idx}>
-                  <img src={cat.img} alt={cat.name} />
+                  <img src={cat.img} alt={cat.breed} />
                   <span className="pet-id-tag">{cat.id}</span>
-                  <h4 style={{ margin: "4px 0 2px 0", fontSize: "1.1rem" }}>{cat.name}</h4>
-                  <p style={{ margin: "2px 0 8px 0" }}>Breed: {cat.breed} | Age: {cat.age}</p>
-                  <button className="adopt-btn" onClick={() => setSelectedPet(`${cat.id} - ${cat.name}`)}>
+                  <h4 style={{ margin: "4px 0 2px 0", fontSize: "1.15rem", fontWeight: "800", color: "#1e293b" }}>{cat.breed}</h4>
+                  <p style={{ margin: "2px 0 8px 0", color: "#64748b", fontSize: "0.88rem", fontWeight: "600" }}>Age: {cat.age}</p>
+                  <button className="adopt-btn" onClick={() => setSelectedPet(`${cat.id} - ${cat.breed}`)}>
                     Adopt Me
                   </button>
                 </div>

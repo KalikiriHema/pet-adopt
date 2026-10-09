@@ -4,7 +4,7 @@ import API_BASE_URL from "../api";
 const DEMO_APPLICATIONS = [
   {
     _id: "ADOPT-7842",
-    petName: "Golden Retriever (Buddy)",
+    petName: "DOG-106 - Golden Retriever",
     name: "Aryan Kapoor",
     email: "aryan.k@example.com",
     status: "approved",
@@ -13,7 +13,7 @@ const DEMO_APPLICATIONS = [
   },
   {
     _id: "ADOPT-9321",
-    petName: "Persian Cat (Luna)",
+    petName: "CAT-101 - Persian Cat",
     name: "Meera Joshi",
     email: "meera.j@gmail.com",
     status: "reviewed",
@@ -22,7 +22,7 @@ const DEMO_APPLICATIONS = [
   },
   {
     _id: "ADOPT-4519",
-    petName: "German Shepherd (Rocky)",
+    petName: "DOG-102 - German Shepherd",
     name: "Rohan Varma",
     email: "rohan.v@yahoo.com",
     status: "pending",

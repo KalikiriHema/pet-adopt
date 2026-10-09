@@ -8,7 +8,7 @@ import {
 let MEMORY_ADOPTIONS = [
   {
     _id: "ADOPT-7842",
-    petName: "DOG-106 - Golden Retriever (Buddy)",
+    petName: "DOG-106 - Golden Retriever",
     name: "Aryan Kapoor",
     email: "aryan.k@example.com",
     mobile: "+91 98765 43210",
@@ -19,7 +19,7 @@ let MEMORY_ADOPTIONS = [
   },
   {
     _id: "ADOPT-9321",
-    petName: "CAT-101 - Persian Cat (Luna)",
+    petName: "CAT-101 - Persian Cat",
     name: "Meera Joshi",
     email: "meera.j@gmail.com",
     mobile: "+91 98234 56789",
@@ -30,7 +30,7 @@ let MEMORY_ADOPTIONS = [
   },
   {
     _id: "ADOPT-4519",
-    petName: "DOG-102 - German Shepherd (Rocky)",
+    petName: "DOG-102 - German Shepherd",
     name: "Rohan Varma",
     email: "rohan.v@yahoo.com",
     mobile: "+91 99112 23344",
@@ -41,7 +41,7 @@ let MEMORY_ADOPTIONS = [
   },
   {
     _id: "ADOPT-6102",
-    petName: "CAT-104 - British Shorthair (Milo)",
+    petName: "CAT-104 - British Shorthair",
     name: "Emily Watson",
     email: "emily@example.com",
     mobile: "+91 98711 22334",

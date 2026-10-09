@@ -141,6 +141,31 @@ export default function Navbar() {
                   <span>Track Status</span>
                 </button>
               </li>
+              <li>
+                <Link
+                  to="/admin"
+                  onClick={() => setMobileMenuOpen(false)}
+                  style={{
+                    background: "#ea580c",
+                    color: "#ffffff",
+                    padding: "6px 14px",
+                    borderRadius: "20px",
+                    fontWeight: "700",
+                    fontSize: "0.85rem",
+                    textDecoration: "none",
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "6px",
+                    boxShadow: "0 2px 8px rgba(234, 88, 12, 0.3)",
+                    transition: "all 0.2s ease",
+                  }}
+                  onMouseEnter={(e) => (e.currentTarget.style.background = "#c2410c")}
+                  onMouseLeave={(e) => (e.currentTarget.style.background = "#ea580c")}
+                >
+                  <span>🛡️</span>
+                  <span>Admin</span>
+                </Link>
+              </li>
             </ul>
           </div>
         </nav>

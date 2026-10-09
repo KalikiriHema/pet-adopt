@@ -9,8 +9,8 @@ const petSchema = new mongoose.Schema(
     },
     name: {
       type: String,
-      required: [true, "Pet name is required"],
-      trim: true
+      trim: true,
+      default: ""
     },
     type: {
       type: String,

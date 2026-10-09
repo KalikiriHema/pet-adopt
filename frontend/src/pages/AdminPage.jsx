@@ -4,16 +4,16 @@ import API_BASE_URL from "../api";
 import "./AdminPage.css";
 
 const PLATFORM_PETS = [
-  { id: "DOG-101", name: "Labrador", breed: "Labrador", type: "Dog", age: "3 years", img: "/dog1.jpg" },
-  { id: "DOG-102", name: "German Shepherd", breed: "German Shepherd", type: "Dog", age: "2 years", img: "/dog2.jpg" },
-  { id: "DOG-103", name: "Beagle", breed: "Beagle", type: "Dog", age: "4 years", img: "/dog3.jpg" },
-  { id: "DOG-104", name: "Bulldog", breed: "Bulldog", type: "Dog", age: "3 years", img: "/dog4.jpg" },
-  { id: "DOG-105", name: "Poodle", breed: "Poodle", type: "Dog", age: "2 years", img: "/dog5.jpg" },
-  { id: "DOG-106", name: "Golden Retriever", breed: "Golden Retriever", type: "Dog", age: "1 year", img: "/dog6.jpg" },
-  { id: "CAT-101", name: "Persian Cat", breed: "Persian Cat", type: "Cat", age: "2 years", img: "/cat1.jpg" },
-  { id: "CAT-102", name: "Siamese Cat", breed: "Siamese Cat", type: "Cat", age: "1.5 years", img: "/cat2.jpg" },
-  { id: "CAT-103", name: "Maine Coon", breed: "Maine Coon", type: "Cat", age: "3 years", img: "/cat3.jpg" },
-  { id: "CAT-104", name: "British Shorthair", breed: "British Shorthair", type: "Cat", age: "2 years", img: "/cat4.jpg" },
+  { id: "DOG-101", breed: "Labrador Retriever", type: "Dog", age: "3 years", img: "/dog1.jpg" },
+  { id: "DOG-102", breed: "German Shepherd", type: "Dog", age: "2 years", img: "/dog2.jpg" },
+  { id: "DOG-103", breed: "Beagle", type: "Dog", age: "4 years", img: "/dog3.jpg" },
+  { id: "DOG-104", breed: "Bulldog", type: "Dog", age: "3 years", img: "/dog4.jpg" },
+  { id: "DOG-105", breed: "Poodle", type: "Dog", age: "2 years", img: "/dog5.jpg" },
+  { id: "DOG-106", breed: "Golden Retriever", type: "Dog", age: "1 year", img: "/dog6.jpg" },
+  { id: "CAT-101", breed: "Persian Cat", type: "Cat", age: "2 years", img: "/cat1.jpg" },
+  { id: "CAT-102", breed: "Siamese Cat", type: "Cat", age: "1.5 years", img: "/cat2.jpg" },
+  { id: "CAT-103", breed: "Maine Coon", type: "Cat", age: "3 years", img: "/cat3.jpg" },
+  { id: "CAT-104", breed: "British Shorthair", type: "Cat", age: "2 years", img: "/cat4.jpg" },
 ];
 
 const INITIAL_DEMO_DATA = {
@@ -62,7 +62,7 @@ const INITIAL_DEMO_DATA = {
       amount: 7500,
       donorName: "Karthik Sundaram",
       donorEmail: "karthik.s@gmail.com",
-      description: "In memory of our beloved Beagle Bruno 🐾",
+      description: "Monthly sponsorship donation for shelter medical care",
       createdAt: new Date(Date.now() - 3600000 * 96).toISOString(),
     },
   ],
@@ -226,6 +226,15 @@ export default function AdminPage() {
     setSuccessToast(msg);
     setTimeout(() => setSuccessToast(""), 3500);
   };
+
+  useEffect(() => {
+    if (petsList && petsList.length > 0) {
+      try {
+        localStorage.setItem("admin_custom_pets", JSON.stringify(petsList));
+        window.dispatchEvent(new Event("petsUpdated"));
+      } catch {}
+    }
+  }, [petsList]);
 
   // Reset pagination when active tab or filters change
   const handleTabChange = (newTab) => {
@@ -507,22 +516,33 @@ export default function AdminPage() {
 
   const handleSavePet = async (e) => {
     e.preventDefault();
-    if (!petFormData.name || !petFormData.breed || !petFormData.age) {
-      alert("Please fill in pet name, breed, and age.");
+    const effectiveBreed = petFormData.breed?.trim();
+    const effectiveAge = petFormData.age?.trim();
+    const effectiveName = petFormData.name?.trim() || effectiveBreed;
+
+    if (!effectiveBreed || !effectiveAge) {
+      alert("Please provide pet breed and age.");
       return;
     }
+
+    const payload = {
+      ...petFormData,
+      name: effectiveName,
+      breed: effectiveBreed,
+      age: effectiveAge,
+    };
 
     if (isDemo) {
       if (editingPet) {
         setPetsList((prev) =>
-          prev.map((p) => (p.id === editingPet.id ? { ...p, ...petFormData } : p))
+          prev.map((p) => (p.id === editingPet.id ? { ...p, ...payload } : p))
         );
-        showToast(`Pet "${petFormData.name}" updated successfully.`);
+        showToast(`Pet "${effectiveBreed}" updated successfully.`);
       } else {
         const prefix = petFormData.type === "Dog" ? "DOG" : "CAT";
         const newId = `${prefix}-${Math.floor(100 + Math.random() * 900)}`;
-        setPetsList((prev) => [{ id: newId, ...petFormData }, ...prev]);
-        showToast(`New pet "${petFormData.name}" added to inventory.`);
+        setPetsList((prev) => [{ id: newId, ...payload }, ...prev]);
+        showToast(`New pet "${effectiveBreed}" (${newId}) added to inventory.`);
       }
       setPetModalOpen(false);
       return;
@@ -536,11 +556,11 @@ export default function AdminPage() {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
           },
-          body: JSON.stringify(petFormData),
+          body: JSON.stringify(payload),
         });
         const json = await res.json();
         if (json.ok) {
-          showToast(`Pet "${petFormData.name}" updated successfully.`);
+          showToast(`Pet "${effectiveBreed}" updated successfully.`);
           loadLiveBackendData(token);
         } else {
           alert("Failed to update pet: " + (json.error || "Error"));
@@ -552,11 +572,11 @@ export default function AdminPage() {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
           },
-          body: JSON.stringify(petFormData),
+          body: JSON.stringify(payload),
         });
         const json = await res.json();
         if (json.ok) {
-          showToast(`New pet "${petFormData.name}" added to database.`);
+          showToast(`New pet "${effectiveBreed}" added to database.`);
           loadLiveBackendData(token);
         } else {
           alert("Failed to create pet: " + (json.error || "Error"));
@@ -569,11 +589,11 @@ export default function AdminPage() {
   };
 
   const handleDeletePet = async (pet) => {
-    if (!window.confirm(`Are you sure you want to permanently delete "${pet.name}" (${pet.id}) from inventory?`)) return;
+    if (!window.confirm(`Are you sure you want to permanently delete ${pet.breed} (${pet.id}) from inventory?`)) return;
 
     if (isDemo || !pet._id) {
       setPetsList((prev) => prev.filter((p) => p.id !== pet.id));
-      showToast(`Pet "${pet.name}" deleted from catalog.`);
+      showToast(`Pet "${pet.breed}" (${pet.id}) deleted from catalog.`);
       return;
     }
 
@@ -584,7 +604,7 @@ export default function AdminPage() {
       });
       const json = await res.json();
       if (json.ok) {
-        showToast(`Pet "${pet.name}" deleted.`);
+        showToast(`Pet "${pet.breed}" (${pet.id}) deleted.`);
         loadLiveBackendData(token);
       } else {
         alert("Failed to delete pet: " + (json.error || "Error"));
@@ -687,18 +707,17 @@ export default function AdminPage() {
     const map = {};
     (data.adoptions || []).forEach((a) => {
       const pName = (a.petName || "").toLowerCase();
-      PLATFORM_PETS.forEach((pet) => {
+      (petsList || PLATFORM_PETS).forEach((pet) => {
         if (
-          pName.includes(pet.name.toLowerCase()) ||
-          pName.includes(pet.id.toLowerCase()) ||
-          pName.includes(pet.breed.toLowerCase())
+          (pet.id && pName.includes(pet.id.toLowerCase())) ||
+          (pet.breed && pName.includes(pet.breed.toLowerCase()))
         ) {
           map[pet.id] = (map[pet.id] || 0) + 1;
         }
       });
     });
     return map;
-  }, [data.adoptions]);
+  }, [data.adoptions, petsList]);
 
   const applySort = useCallback((list, nameKey = "name") => {
     return [...list].sort((a, b) => {
@@ -774,7 +793,15 @@ export default function AdminPage() {
 
   const filteredOverviewActivities = useMemo(() => {
     const list = allOverviewActivities.filter((item) => {
-      if (overviewModuleFilter !== "all" && item.type !== overviewModuleFilter) return false;
+      if (overviewModuleFilter === "pending") {
+        const isPending = item.status === "pending" || item.status === "unread";
+        if (!isPending) return false;
+      } else if (overviewModuleFilter === "completed") {
+        const isCompleted = ["approved", "completed", "accepted", "read", "replied"].includes(item.status);
+        if (!isCompleted) return false;
+      } else if (overviewModuleFilter !== "all" && item.type !== overviewModuleFilter) {
+        return false;
+      }
       if (!matchesDateRange(item.date, dateRangeFilter)) return false;
       if (!searchQuery) return true;
       const q = searchQuery.toLowerCase().trim();
@@ -864,23 +891,20 @@ export default function AdminPage() {
       if (!searchQuery) return true;
       const q = searchQuery.toLowerCase().trim();
       return (
-        pet.name?.toLowerCase().includes(q) ||
         pet.breed?.toLowerCase().includes(q) ||
         pet.id?.toLowerCase().includes(q) ||
         pet.type?.toLowerCase().includes(q)
       );
     });
-    return applySort(list, "name");
+    return applySort(list, "breed");
   }, [petsList, petCategoryFilter, petInquiryFilter, searchQuery, petDemandMap, applySort]);
 
   // Counts for Segmented Filter Chips
   const overviewModuleCounts = useMemo(() => {
     const total = allOverviewActivities.length;
-    const adoptions = allOverviewActivities.filter((a) => a.type === "adoption").length;
-    const donations = allOverviewActivities.filter((a) => a.type === "donation").length;
-    const volunteers = allOverviewActivities.filter((a) => a.type === "volunteer").length;
-    const contacts = allOverviewActivities.filter((a) => a.type === "contact").length;
-    return { total, adoptions, donations, volunteers, contacts };
+    const pending = allOverviewActivities.filter((a) => a.status === "pending" || a.status === "unread").length;
+    const completed = allOverviewActivities.filter((a) => ["approved", "completed", "accepted", "read", "replied"].includes(a.status)).length;
+    return { total, pending, completed };
   }, [allOverviewActivities]);
 
   const adoptionCounts = useMemo(() => {
@@ -916,11 +940,11 @@ export default function AdminPage() {
   }, [data.contacts]);
 
   const petCounts = useMemo(() => {
-    const total = PLATFORM_PETS.length;
-    const dogs = PLATFORM_PETS.filter((p) => p.type === "Dog").length;
-    const cats = PLATFORM_PETS.filter((p) => p.type === "Cat").length;
+    const total = petsList.length;
+    const dogs = petsList.filter((p) => p.type === "Dog" || p.type === "dog").length;
+    const cats = petsList.filter((p) => p.type === "Cat" || p.type === "cat").length;
     return { total, dogs, cats };
-  }, []);
+  }, [petsList]);
 
   // Check if any filter is currently active
   const isFilterActive = useMemo(() => {
@@ -952,11 +976,11 @@ export default function AdminPage() {
     return (
       <div className="table-pagination-bar">
         <div className="pagination-left">
-          <span>
-            Showing <strong>{startIdx} - {endIdx}</strong> of <strong>{totalItems}</strong> entries
+          <span className="pagination-info">
+            Showing <strong>{startIdx} – {endIdx}</strong> of <strong>{totalItems}</strong> entries
           </span>
-          <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
-            <span>Per page:</span>
+          <div className="pagination-page-size">
+            <span style={{ color: "#64748b", fontSize: "0.82rem", fontWeight: "600" }}>Rows per page:</span>
             <select
               value={rowsPerPage}
               onChange={(e) => {
@@ -977,38 +1001,40 @@ export default function AdminPage() {
           <div className="pagination-right">
             <button
               type="button"
-              className="pagination-btn"
+              className="pagination-btn nav-btn"
               disabled={currentPage <= 1}
               onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))}
             >
-              &larr; Prev
+              ‹ Previous
             </button>
 
-            {Array.from({ length: totalPages }, (_, i) => i + 1)
-              .filter((p) => p === 1 || p === totalPages || Math.abs(p - currentPage) <= 1)
-              .map((p, idx, arr) => {
-                const showEllipsis = idx > 0 && p - arr[idx - 1] > 1;
-                return (
-                  <React.Fragment key={p}>
-                    {showEllipsis && <span style={{ padding: "0 4px", color: "#94a3b8" }}>...</span>}
-                    <button
-                      type="button"
-                      className={`pagination-btn ${currentPage === p ? "active" : ""}`}
-                      onClick={() => setCurrentPage(p)}
-                    >
-                      {p}
-                    </button>
-                  </React.Fragment>
-                );
-              })}
+            <div className="pagination-numbers">
+              {Array.from({ length: totalPages }, (_, i) => i + 1)
+                .filter((p) => p === 1 || p === totalPages || Math.abs(p - currentPage) <= 1)
+                .map((p, idx, arr) => {
+                  const showEllipsis = idx > 0 && p - arr[idx - 1] > 1;
+                  return (
+                    <React.Fragment key={p}>
+                      {showEllipsis && <span className="pagination-ellipsis">…</span>}
+                      <button
+                        type="button"
+                        className={`pagination-btn number-btn ${currentPage === p ? "active" : ""}`}
+                        onClick={() => setCurrentPage(p)}
+                      >
+                        {p}
+                      </button>
+                    </React.Fragment>
+                  );
+                })}
+            </div>
 
             <button
               type="button"
-              className="pagination-btn"
+              className="pagination-btn nav-btn"
               disabled={currentPage >= totalPages}
               onClick={() => setCurrentPage((p) => Math.min(p + 1, totalPages))}
             >
-              Next &rarr;
+              Next ›
             </button>
           </div>
         )}
@@ -1070,14 +1096,13 @@ export default function AdminPage() {
         ].join(",")
       );
     } else if (activeTab === "catalog") {
-      csvContent += "Pet ID,Pet Name,Category,Breed,Age,Inquiries\n";
+      csvContent += "Pet ID,Category,Breed,Age,Inquiries\n";
       rows = filteredPets.map((p) =>
         [
-          `"${p.id}"`,
-          `"${p.name}"`,
-          `"${p.type}"`,
-          `"${p.breed}"`,
-          `"${p.age}"`,
+          `"${p.id || ""}"`,
+          `"${p.type || ""}"`,
+          `"${p.breed || ""}"`,
+          `"${p.age || ""}"`,
           petDemandMap[p.id] || 0,
         ].join(",")
       );
@@ -1268,18 +1293,18 @@ export default function AdminPage() {
               <div style={{ flex: 1, height: "1px", background: "#e2e8f0" }}></div>
             </div>
 
-            {/* MINIMAL DEMO LOGIN BUTTON BELOW SIGN IN */}
+            {/* QUICK ACCESS BUTTON BELOW SIGN IN */}
             <button
               type="button"
               onClick={handleLaunchDemoMode}
               style={{
                 width: "100%",
                 padding: "11px 16px",
-                background: "#fefce8",
-                color: "#854d0e",
-                border: "1.5px solid #fef08a",
+                background: "#f8fafc",
+                color: "#475569",
+                border: "1.5px solid #cbd5e1",
                 borderRadius: "8px",
-                fontSize: "0.92rem",
+                fontSize: "0.88rem",
                 fontWeight: "700",
                 cursor: "pointer",
                 display: "flex",
@@ -1289,16 +1314,16 @@ export default function AdminPage() {
                 transition: "all 0.2s ease",
               }}
               onMouseEnter={(e) => {
-                e.currentTarget.style.background = "#fef9c3";
-                e.currentTarget.style.borderColor = "#fde047";
+                e.currentTarget.style.background = "#f1f5f9";
+                e.currentTarget.style.borderColor = "#94a3b8";
               }}
               onMouseLeave={(e) => {
-                e.currentTarget.style.background = "#fefce8";
-                e.currentTarget.style.borderColor = "#fef08a";
+                e.currentTarget.style.background = "#f8fafc";
+                e.currentTarget.style.borderColor = "#cbd5e1";
               }}
             >
-              <span>🎭</span>
-              <span>Demo Login (Static Data)</span>
+              <span>⚡</span>
+              <span>Quick Preview Access</span>
             </button>
 
             <div style={{ textAlign: "center", marginTop: "14px" }}>
@@ -1338,12 +1363,12 @@ export default function AdminPage() {
                       fontWeight: "700",
                       padding: "3px 10px",
                       borderRadius: "20px",
-                      background: isDemo ? "#fff7ed" : "#ecfdf5",
-                      color: isDemo ? "#c2410c" : "#047857",
-                      border: isDemo ? "1px solid #fed7aa" : "1px solid #a7f3d0",
+                      background: "#ecfdf5",
+                      color: "#047857",
+                      border: "1px solid #a7f3d0",
                     }}
                   >
-                    {isDemo ? "🎭 Demo Mode (Static Data Active)" : "🟢 Live Database (Real Data Active)"}
+                    🟢 Active Session
                   </span>
                 </div>
                 <div className="brand-subtitle">
@@ -1354,29 +1379,6 @@ export default function AdminPage() {
             </div>
 
             <div className="header-actions">
-              {isDemo ? (
-                <button
-                  onClick={() => {
-                    handleLogout();
-                    setEmail("admin@petcare.com");
-                    setPassword("admin123");
-                  }}
-                  className="header-action-btn"
-                  title="Switch to Real Live Admin"
-                  style={{ color: "#047857", borderColor: "#a7f3d0", background: "#ecfdf5" }}
-                >
-                  🟢 Switch to Live Admin
-                </button>
-              ) : (
-                <button
-                  onClick={handleLaunchDemoMode}
-                  className="header-action-btn"
-                  title="Switch to Demo Sandbox"
-                  style={{ color: "#c2410c", borderColor: "#fed7aa", background: "#fff7ed" }}
-                >
-                  🚀 Switch to Demo Mode
-                </button>
-              )}
               <button
                 onClick={() => loadLiveBackendData(token)}
                 className="header-action-btn"
@@ -1396,53 +1398,6 @@ export default function AdminPage() {
               </button>
             </div>
           </header>
-
-          {/* Demo Mode Notice Banner */}
-          {isDemo && (
-            <div
-              style={{
-                background: "linear-gradient(90deg, #fffbeb, #fef3c7)",
-                border: "1px solid #fde68a",
-                borderRadius: "10px",
-                padding: "10px 16px",
-                marginBottom: "20px",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "space-between",
-                gap: "12px",
-                fontSize: "0.85rem",
-                color: "#92400e",
-                flexWrap: "wrap",
-              }}
-            >
-              <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-                <span style={{ fontSize: "1.1rem" }}>💡</span>
-                <span>
-                  <strong>Demo Mode (Static Data):</strong> You are viewing pre-loaded sample datasets. Status changes, deletions, and exports update locally in memory without modifying the live database.
-                </span>
-              </div>
-              <button
-                onClick={() => {
-                  handleLogout();
-                  setEmail("admin@petcare.com");
-                  setPassword("admin123");
-                }}
-                style={{
-                  background: "#d97706",
-                  color: "#ffffff",
-                  border: "none",
-                  padding: "6px 14px",
-                  borderRadius: "6px",
-                  fontWeight: "700",
-                  fontSize: "0.8rem",
-                  cursor: "pointer",
-                  whiteSpace: "nowrap",
-                }}
-              >
-                Sign In for Live Data &rarr;
-              </button>
-            </div>
-          )}
 
           {/* KPI Stat Cards Grid */}
           <section className="kpi-grid">
@@ -1562,276 +1517,148 @@ export default function AdminPage() {
                   onClick={() => handleTabChange("catalog")}
                 >
                   <span>🐾 Pet Inventory</span>
-                  <span className="tab-count-badge">{PLATFORM_PETS.length}</span>
+                  <span className="tab-count-badge">{petsList.length}</span>
                 </button>
               </div>
             </div>
 
-            {/* Level 2: Command Toolbar with Full Multi-Filter Suite */}
+            {/* Level 2: Clean, Modern Command Bar */}
             <div className="dashboard-command-bar">
               <div className="command-bar-row">
-                {/* Segmented Filter Chips */}
-                <div className="filter-chips-strip">
-                  <span className="filter-chip-label">Filter:</span>
-
-                  {/* Overview Tab Module Chips */}
-                  {activeTab === "overview" && (
-                    <>
-                      <button
-                        className={`filter-chip-btn ${overviewModuleFilter === "all" ? "active" : ""}`}
-                        onClick={() => { setOverviewModuleFilter("all"); setCurrentPage(1); }}
-                      >
-                        <span>All Records</span>
-                        <span className="filter-chip-badge">{overviewModuleCounts.total}</span>
-                      </button>
-                      <button
-                        className={`filter-chip-btn ${overviewModuleFilter === "adoption" ? "active" : ""}`}
-                        onClick={() => { setOverviewModuleFilter("adoption"); setCurrentPage(1); }}
-                      >
-                        <span>🐾 Adoptions</span>
-                        <span className="filter-chip-badge">{overviewModuleCounts.adoptions}</span>
-                      </button>
-                      <button
-                        className={`filter-chip-btn ${overviewModuleFilter === "donation" ? "active" : ""}`}
-                        onClick={() => { setOverviewModuleFilter("donation"); setCurrentPage(1); }}
-                      >
-                        <span>💰 Donations</span>
-                        <span className="filter-chip-badge">{overviewModuleCounts.donations}</span>
-                      </button>
-                      <button
-                        className={`filter-chip-btn ${overviewModuleFilter === "volunteer" ? "active" : ""}`}
-                        onClick={() => { setOverviewModuleFilter("volunteer"); setCurrentPage(1); }}
-                      >
-                        <span>🙋 Volunteers</span>
-                        <span className="filter-chip-badge">{overviewModuleCounts.volunteers}</span>
-                      </button>
-                      <button
-                        className={`filter-chip-btn ${overviewModuleFilter === "contact" ? "active" : ""}`}
-                        onClick={() => { setOverviewModuleFilter("contact"); setCurrentPage(1); }}
-                      >
-                        <span>💬 Messages</span>
-                        <span className="filter-chip-badge">{overviewModuleCounts.contacts}</span>
-                      </button>
-                    </>
-                  )}
-
-                  {/* Adoptions Tab Chips */}
-                  {activeTab === "adoptions" && (
-                    <>
-                      <button
-                        className={`filter-chip-btn ${adoptionStatusFilter === "all" ? "active" : ""}`}
-                        onClick={() => { setAdoptionStatusFilter("all"); setCurrentPage(1); }}
-                      >
-                        <span>All</span>
-                        <span className="filter-chip-badge">{adoptionCounts.total}</span>
-                      </button>
-                      <button
-                        className={`filter-chip-btn ${adoptionStatusFilter === "pending" ? "active" : ""}`}
-                        onClick={() => { setAdoptionStatusFilter("pending"); setCurrentPage(1); }}
-                      >
-                        <span>⏳ Pending</span>
-                        <span className="filter-chip-badge">{adoptionCounts.pending}</span>
-                      </button>
-                      <button
-                        className={`filter-chip-btn ${adoptionStatusFilter === "reviewed" ? "active" : ""}`}
-                        onClick={() => { setAdoptionStatusFilter("reviewed"); setCurrentPage(1); }}
-                      >
-                        <span>👀 Reviewed</span>
-                        <span className="filter-chip-badge">{adoptionCounts.reviewed}</span>
-                      </button>
-                      <button
-                        className={`filter-chip-btn ${adoptionStatusFilter === "approved" ? "active" : ""}`}
-                        onClick={() => { setAdoptionStatusFilter("approved"); setCurrentPage(1); }}
-                      >
-                        <span>✅ Approved</span>
-                        <span className="filter-chip-badge">{adoptionCounts.approved}</span>
-                      </button>
-                      <button
-                        className={`filter-chip-btn ${adoptionStatusFilter === "rejected" ? "active" : ""}`}
-                        onClick={() => { setAdoptionStatusFilter("rejected"); setCurrentPage(1); }}
-                      >
-                        <span>❌ Rejected</span>
-                        <span className="filter-chip-badge">{adoptionCounts.rejected}</span>
-                      </button>
-                    </>
-                  )}
-
-                  {/* Donations Tab Chips */}
-                  {activeTab === "donations" && (
-                    <>
-                      <button
-                        className={`filter-chip-btn ${donationFilter === "all" ? "active" : ""}`}
-                        onClick={() => { setDonationFilter("all"); setCurrentPage(1); }}
-                      >
-                        <span>All Contributions</span>
-                        <span className="filter-chip-badge">{donationCounts.total}</span>
-                      </button>
-                      <button
-                        className={`filter-chip-btn ${donationFilter === "money" ? "active" : ""}`}
-                        onClick={() => { setDonationFilter("money"); setCurrentPage(1); }}
-                      >
-                        <span>💵 Monetary (₹)</span>
-                        <span className="filter-chip-badge">{donationCounts.money}</span>
-                      </button>
-                      <button
-                        className={`filter-chip-btn ${donationFilter === "item" ? "active" : ""}`}
-                        onClick={() => { setDonationFilter("item"); setCurrentPage(1); }}
-                      >
-                        <span>📦 Pet Supplies</span>
-                        <span className="filter-chip-badge">{donationCounts.item}</span>
-                      </button>
-                    </>
-                  )}
-
-                  {/* Volunteers Tab Chips */}
-                  {activeTab === "volunteers" && (
-                    <>
-                      <button
-                        className={`filter-chip-btn ${volunteerStatusFilter === "all" ? "active" : ""}`}
-                        onClick={() => { setVolunteerStatusFilter("all"); setCurrentPage(1); }}
-                      >
-                        <span>All Volunteers</span>
-                        <span className="filter-chip-badge">{volunteerCounts.total}</span>
-                      </button>
-                      <button
-                        className={`filter-chip-btn ${volunteerStatusFilter === "pending" ? "active" : ""}`}
-                        onClick={() => { setVolunteerStatusFilter("pending"); setCurrentPage(1); }}
-                      >
-                        <span>⏳ Pending</span>
-                        <span className="filter-chip-badge">{volunteerCounts.pending}</span>
-                      </button>
-                      <button
-                        className={`filter-chip-btn ${volunteerStatusFilter === "accepted" ? "active" : ""}`}
-                        onClick={() => { setVolunteerStatusFilter("accepted"); setCurrentPage(1); }}
-                      >
-                        <span>✅ Accepted</span>
-                        <span className="filter-chip-badge">{volunteerCounts.accepted}</span>
-                      </button>
-                      <button
-                        className={`filter-chip-btn ${volunteerStatusFilter === "contacted" ? "active" : ""}`}
-                        onClick={() => { setVolunteerStatusFilter("contacted"); setCurrentPage(1); }}
-                      >
-                        <span>📞 Contacted</span>
-                        <span className="filter-chip-badge">{volunteerCounts.contacted}</span>
-                      </button>
-                    </>
-                  )}
-
-                  {/* Messages Tab Chips */}
-                  {activeTab === "contacts" && (
-                    <>
-                      <button
-                        className={`filter-chip-btn ${contactStatusFilter === "all" ? "active" : ""}`}
-                        onClick={() => { setContactStatusFilter("all"); setCurrentPage(1); }}
-                      >
-                        <span>All Messages</span>
-                        <span className="filter-chip-badge">{contactCounts.total}</span>
-                      </button>
-                      <button
-                        className={`filter-chip-btn ${contactStatusFilter === "unread" ? "active" : ""}`}
-                        onClick={() => { setContactStatusFilter("unread"); setCurrentPage(1); }}
-                      >
-                        <span>📬 Unread</span>
-                        <span className="filter-chip-badge">{contactCounts.unread}</span>
-                      </button>
-                      <button
-                        className={`filter-chip-btn ${contactStatusFilter === "read" ? "active" : ""}`}
-                        onClick={() => { setContactStatusFilter("read"); setCurrentPage(1); }}
-                      >
-                        <span>📖 Read</span>
-                        <span className="filter-chip-badge">{contactCounts.read}</span>
-                      </button>
-                      <button
-                        className={`filter-chip-btn ${contactStatusFilter === "replied" ? "active" : ""}`}
-                        onClick={() => { setContactStatusFilter("replied"); setCurrentPage(1); }}
-                      >
-                        <span>✉️ Replied</span>
-                        <span className="filter-chip-badge">{contactCounts.replied}</span>
-                      </button>
-                    </>
-                  )}
-
-                  {/* Pet Catalog Tab Chips */}
-                  {activeTab === "catalog" && (
-                    <>
-                      <button
-                        className={`filter-chip-btn ${petCategoryFilter === "all" ? "active" : ""}`}
-                        onClick={() => { setPetCategoryFilter("all"); setCurrentPage(1); }}
-                      >
-                        <span>All Pets</span>
-                        <span className="filter-chip-badge">{petCounts.total}</span>
-                      </button>
-                      <button
-                        className={`filter-chip-btn ${petCategoryFilter === "Dog" ? "active" : ""}`}
-                        onClick={() => { setPetCategoryFilter("Dog"); setCurrentPage(1); }}
-                      >
-                        <span>🐕 Dogs</span>
-                        <span className="filter-chip-badge">{petCounts.dogs}</span>
-                      </button>
-                      <button
-                        className={`filter-chip-btn ${petCategoryFilter === "Cat" ? "active" : ""}`}
-                        onClick={() => { setPetCategoryFilter("Cat"); setCurrentPage(1); }}
-                      >
-                        <span>🐱 Cats</span>
-                        <span className="filter-chip-badge">{petCounts.cats}</span>
-                      </button>
-                      <button
-                        className={`filter-chip-btn ${petInquiryFilter === "inquiries" ? "active" : ""}`}
-                        onClick={() => {
-                          setPetInquiryFilter(petInquiryFilter === "inquiries" ? "all" : "inquiries");
-                          setCurrentPage(1);
-                        }}
-                      >
-                        <span>🔥 With Inquiries</span>
-                      </button>
-                    </>
+                {/* Search Box */}
+                <div className="pro-search-box">
+                  <span className="pro-search-icon">🔍</span>
+                  <input
+                    type="text"
+                    className="pro-search-input"
+                    placeholder={
+                      activeTab === "catalog"
+                        ? "Search pets by breed, name, ID..."
+                        : activeTab === "overview"
+                        ? "Search all activities..."
+                        : `Search ${activeTab}...`
+                    }
+                    value={searchQuery}
+                    onChange={(e) => { setSearchQuery(e.target.value); setCurrentPage(1); }}
+                  />
+                  {searchQuery && (
+                    <button
+                      type="button"
+                      className="pro-search-clear"
+                      onClick={() => setSearchQuery("")}
+                      title="Clear search"
+                    >
+                      ✕
+                    </button>
                   )}
                 </div>
 
-                {/* Search, Date Range, Sort & CSV Export Tools */}
+                {/* Filter Controls & Actions Group */}
                 <div className="search-and-tools">
-                  <div className="pro-search-box">
-                    <span className="pro-search-icon">🔍</span>
-                    <input
-                      type="text"
-                      className="pro-search-input"
-                      placeholder={`Search ${activeTab === "catalog" ? "pets by breed, id, name" : activeTab}...`}
-                      value={searchQuery}
-                      onChange={(e) => { setSearchQuery(e.target.value); setCurrentPage(1); }}
-                    />
-                    {searchQuery && (
-                      <button
-                        type="button"
-                        className="pro-search-clear"
-                        onClick={() => setSearchQuery("")}
-                        title="Clear search"
-                      >
-                        ✕
-                      </button>
-                    )}
-                  </div>
+                  {/* Contextual Status / Category Filter */}
+                  {activeTab === "overview" && (
+                    <select
+                      value={overviewModuleFilter}
+                      onChange={(e) => { setOverviewModuleFilter(e.target.value); setCurrentPage(1); }}
+                      className="sort-select"
+                      aria-label="Filter activity"
+                    >
+                      <option value="all">All Activities ({overviewModuleCounts.total})</option>
+                      <option value="pending">⏳ Needs Action ({overviewModuleCounts.pending})</option>
+                      <option value="completed">✅ Completed ({overviewModuleCounts.completed})</option>
+                    </select>
+                  )}
 
-                  {/* Date Range Filter (for temporal records) */}
+                  {activeTab === "adoptions" && (
+                    <select
+                      value={adoptionStatusFilter}
+                      onChange={(e) => { setAdoptionStatusFilter(e.target.value); setCurrentPage(1); }}
+                      className="sort-select"
+                      aria-label="Filter by adoption status"
+                    >
+                      <option value="all">Status: All ({adoptionCounts.total})</option>
+                      <option value="pending">⏳ Pending ({adoptionCounts.pending})</option>
+                      <option value="reviewed">👀 Reviewed ({adoptionCounts.reviewed})</option>
+                      <option value="approved">✅ Approved ({adoptionCounts.approved})</option>
+                      <option value="rejected">❌ Rejected ({adoptionCounts.rejected})</option>
+                    </select>
+                  )}
+
+                  {activeTab === "donations" && (
+                    <select
+                      value={donationFilter}
+                      onChange={(e) => { setDonationFilter(e.target.value); setCurrentPage(1); }}
+                      className="sort-select"
+                      aria-label="Filter donations"
+                    >
+                      <option value="all">Type: All ({donationCounts.total})</option>
+                      <option value="money">💵 Monetary (₹)</option>
+                      <option value="item">📦 Supplies</option>
+                    </select>
+                  )}
+
+                  {activeTab === "volunteers" && (
+                    <select
+                      value={volunteerStatusFilter}
+                      onChange={(e) => { setVolunteerStatusFilter(e.target.value); setCurrentPage(1); }}
+                      className="sort-select"
+                      aria-label="Filter volunteers"
+                    >
+                      <option value="all">Status: All ({volunteerCounts.total})</option>
+                      <option value="pending">⏳ Pending ({volunteerCounts.pending})</option>
+                      <option value="accepted">✅ Accepted ({volunteerCounts.accepted})</option>
+                      <option value="contacted">📞 Contacted ({volunteerCounts.contacted})</option>
+                    </select>
+                  )}
+
+                  {activeTab === "contacts" && (
+                    <select
+                      value={contactStatusFilter}
+                      onChange={(e) => { setContactStatusFilter(e.target.value); setCurrentPage(1); }}
+                      className="sort-select"
+                      aria-label="Filter messages"
+                    >
+                      <option value="all">Status: All ({contactCounts.total})</option>
+                      <option value="unread">📬 Unread ({contactCounts.unread})</option>
+                      <option value="read">📖 Read ({contactCounts.read})</option>
+                      <option value="replied">✉️ Replied ({contactCounts.replied})</option>
+                    </select>
+                  )}
+
+                  {activeTab === "catalog" && (
+                    <select
+                      value={petCategoryFilter}
+                      onChange={(e) => { setPetCategoryFilter(e.target.value); setCurrentPage(1); }}
+                      className="sort-select"
+                      aria-label="Filter pets by category"
+                    >
+                      <option value="all">Category: All ({petCounts.total})</option>
+                      <option value="Dog">🐕 Dogs ({petCounts.dogs})</option>
+                      <option value="Cat">🐱 Cats ({petCounts.cats})</option>
+                    </select>
+                  )}
+
+                  {/* Date Range (Temporal tabs) */}
                   {activeTab !== "catalog" && (
                     <select
                       value={dateRangeFilter}
                       onChange={(e) => { setDateRangeFilter(e.target.value); setCurrentPage(1); }}
                       className="date-select"
-                      title="Filter by creation timeframe"
+                      aria-label="Filter by time"
                     >
                       <option value="all">📅 All Time</option>
-                      <option value="today">⚡ Today (Last 24h)</option>
+                      <option value="today">⚡ Today</option>
                       <option value="7days">📆 Past 7 Days</option>
                       <option value="30days">🗓️ Past 30 Days</option>
                     </select>
                   )}
 
-                  {/* Dynamic Sorting Options */}
+                  {/* Sort */}
                   <select
                     value={sortBy}
                     onChange={(e) => setSortBy(e.target.value)}
                     className="sort-select"
-                    title="Sort records"
+                    aria-label="Sort records"
                   >
                     {activeTab === "catalog" ? (
                       <>
@@ -1843,24 +1670,11 @@ export default function AdminPage() {
                         <option value="newest">📅 Newest First</option>
                         <option value="oldest">📅 Oldest First</option>
                         <option value="name">🔤 Name (A - Z)</option>
-                        {activeTab === "donations" && (
-                          <>
-                            <option value="amount_desc">💰 Amount (High to Low)</option>
-                            <option value="amount_asc">💰 Amount (Low to High)</option>
-                          </>
-                        )}
                       </>
                     )}
                   </select>
 
-                  <button
-                    onClick={handleExportCSV}
-                    className="export-btn"
-                    title="Export filtered records to CSV"
-                  >
-                    📥 Export CSV
-                  </button>
-
+                  {/* Add Pet Button (Prominently displayed in Catalog tab) */}
                   {activeTab === "catalog" && (
                     <button
                       type="button"
@@ -1878,160 +1692,42 @@ export default function AdminPage() {
                         alignItems: "center",
                         gap: "6px",
                         whiteSpace: "nowrap",
+                        boxShadow: "0 2px 8px rgba(234, 88, 12, 0.25)",
                       }}
                     >
                       <span>➕</span>
                       <span>Add New Pet</span>
                     </button>
                   )}
-                </div>
-              </div>
-
-              {/* Active Filter Indicators with Removable Tags */}
-              {isFilterActive && (
-                <div className="active-filters-info-bar">
-                  <div style={{ display: "flex", alignItems: "center", gap: "8px", flexWrap: "wrap" }}>
-                    <span>Active Filters:</span>
-                    <div className="active-filter-tags">
-                      {searchQuery && (
-                        <span className="filter-tag-pill">
-                          🔍 "{searchQuery}"
-                          <button
-                            type="button"
-                            className="filter-tag-remove"
-                            onClick={() => setSearchQuery("")}
-                          >
-                            ✕
-                          </button>
-                        </span>
-                      )}
-
-                      {dateRangeFilter !== "all" && (
-                        <span className="filter-tag-pill">
-                          📅 {dateRangeFilter === "today" ? "Today" : dateRangeFilter === "7days" ? "Past 7 Days" : "Past 30 Days"}
-                          <button
-                            type="button"
-                            className="filter-tag-remove"
-                            onClick={() => setDateRangeFilter("all")}
-                          >
-                            ✕
-                          </button>
-                        </span>
-                      )}
-
-                      {activeTab === "overview" && overviewModuleFilter !== "all" && (
-                        <span className="filter-tag-pill">
-                          Module: {overviewModuleFilter}
-                          <button
-                            type="button"
-                            className="filter-tag-remove"
-                            onClick={() => setOverviewModuleFilter("all")}
-                          >
-                            ✕
-                          </button>
-                        </span>
-                      )}
-
-                      {activeTab === "adoptions" && adoptionStatusFilter !== "all" && (
-                        <span className="filter-tag-pill">
-                          Status: {adoptionStatusFilter}
-                          <button
-                            type="button"
-                            className="filter-tag-remove"
-                            onClick={() => setAdoptionStatusFilter("all")}
-                          >
-                            ✕
-                          </button>
-                        </span>
-                      )}
-
-                      {activeTab === "donations" && donationFilter !== "all" && (
-                        <span className="filter-tag-pill">
-                          Type: {donationFilter}
-                          <button
-                            type="button"
-                            className="filter-tag-remove"
-                            onClick={() => setDonationFilter("all")}
-                          >
-                            ✕
-                          </button>
-                        </span>
-                      )}
-
-                      {activeTab === "volunteers" && volunteerStatusFilter !== "all" && (
-                        <span className="filter-tag-pill">
-                          Status: {volunteerStatusFilter}
-                          <button
-                            type="button"
-                            className="filter-tag-remove"
-                            onClick={() => setVolunteerStatusFilter("all")}
-                          >
-                            ✕
-                          </button>
-                        </span>
-                      )}
-
-                      {activeTab === "contacts" && contactStatusFilter !== "all" && (
-                        <span className="filter-tag-pill">
-                          Status: {contactStatusFilter}
-                          <button
-                            type="button"
-                            className="filter-tag-remove"
-                            onClick={() => setContactStatusFilter("all")}
-                          >
-                            ✕
-                          </button>
-                        </span>
-                      )}
-
-                      {activeTab === "catalog" && petCategoryFilter !== "all" && (
-                        <span className="filter-tag-pill">
-                          Category: {petCategoryFilter}
-                          <button
-                            type="button"
-                            className="filter-tag-remove"
-                            onClick={() => setPetCategoryFilter("all")}
-                          >
-                            ✕
-                          </button>
-                        </span>
-                      )}
-
-                      {activeTab === "catalog" && petInquiryFilter !== "all" && (
-                        <span className="filter-tag-pill">
-                          Inquiries: {petInquiryFilter}
-                          <button
-                            type="button"
-                            className="filter-tag-remove"
-                            onClick={() => setPetInquiryFilter("all")}
-                          >
-                            ✕
-                          </button>
-                        </span>
-                      )}
-                    </div>
-
-                    <span style={{ marginLeft: "4px" }}>
-                      • Matching <strong>
-                        {activeTab === "overview" && filteredOverviewActivities.length}
-                        {activeTab === "adoptions" && filteredAdoptions.length}
-                        {activeTab === "donations" && filteredDonations.length}
-                        {activeTab === "volunteers" && filteredVolunteers.length}
-                        {activeTab === "contacts" && filteredContacts.length}
-                        {activeTab === "catalog" && filteredPets.length}
-                      </strong> results
-                    </span>
-                  </div>
 
                   <button
-                    type="button"
-                    onClick={handleResetFilters}
-                    className="reset-all-filters-btn"
+                    onClick={handleExportCSV}
+                    className="export-btn"
+                    title="Export records to CSV"
                   >
-                    Reset All Filters
+                    📥 Export CSV
                   </button>
+
+                  {isFilterActive && (
+                    <button
+                      type="button"
+                      onClick={handleResetFilters}
+                      style={{
+                        background: "#fef2f2",
+                        border: "1px solid #fecaca",
+                        color: "#b91c1c",
+                        borderRadius: "8px",
+                        padding: "8px 12px",
+                        fontSize: "0.8rem",
+                        fontWeight: "700",
+                        cursor: "pointer",
+                      }}
+                    >
+                      Clear
+                    </button>
+                  )}
                 </div>
-              )}
+              </div>
             </div>
 
             {/* TAB VIEWS */}
@@ -2059,6 +1755,72 @@ export default function AdminPage() {
                       <div className="quick-metric-num">{unreadContactsCount}</div>
                       <div className="quick-metric-lbl">New Messages</div>
                     </div>
+                  </div>
+                </div>
+
+                {/* Direct Pet Inventory Quick Action Card */}
+                <div
+                  style={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                    flexWrap: "wrap",
+                    gap: "12px",
+                    background: "#ffffff",
+                    padding: "14px 20px",
+                    borderRadius: "12px",
+                    border: "1.5px solid #fed7aa",
+                    boxShadow: "0 2px 8px rgba(234, 88, 12, 0.08)",
+                  }}
+                >
+                  <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+                    <div style={{ background: "#fff7ed", padding: "8px 12px", borderRadius: "10px", fontSize: "1.3rem" }}>🐾</div>
+                    <div>
+                      <strong style={{ color: "#0f172a", fontSize: "0.95rem" }}>Pet Catalog & Inventory ({petsList.length} Active Animals)</strong>
+                      <div style={{ fontSize: "0.82rem", color: "#64748b" }}>Add new pets, edit profiles, or manage adoption availability</div>
+                    </div>
+                  </div>
+                  <div style={{ display: "flex", gap: "10px", flexWrap: "wrap" }}>
+                    <button
+                      type="button"
+                      onClick={() => handleTabChange("catalog")}
+                      style={{
+                        background: "#f1f5f9",
+                        border: "1px solid #cbd5e1",
+                        color: "#334155",
+                        padding: "8px 16px",
+                        borderRadius: "8px",
+                        fontWeight: "700",
+                        fontSize: "0.85rem",
+                        cursor: "pointer",
+                      }}
+                    >
+                      View All Pets &rarr;
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        handleTabChange("catalog");
+                        handleOpenAddPetModal();
+                      }}
+                      style={{
+                        background: "#ea580c",
+                        color: "#ffffff",
+                        border: "none",
+                        padding: "8px 18px",
+                        borderRadius: "8px",
+                        fontWeight: "800",
+                        fontSize: "0.85rem",
+                        cursor: "pointer",
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "6px",
+                        boxShadow: "0 2px 8px rgba(234, 88, 12, 0.25)",
+                      }}
+                    >
+                      <span>➕</span>
+                      <span>Add New Pet</span>
+                    </button>
                   </div>
                 </div>
 
@@ -2635,34 +2397,107 @@ export default function AdminPage() {
             {/* 6. PET CATALOG INVENTORY TAB */}
             {activeTab === "catalog" && (
               <div className="table-wrapper">
+                {/* Prominent Pet Inventory Action Header */}
+                <div
+                  style={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                    flexWrap: "wrap",
+                    gap: "16px",
+                    background: "#0f172a",
+                    color: "#ffffff",
+                    padding: "20px 24px",
+                    borderRadius: "12px",
+                    marginBottom: "20px",
+                    boxShadow: "0 4px 16px rgba(15, 23, 42, 0.15)",
+                  }}
+                >
+                  <div>
+                    <h3 style={{ margin: 0, fontSize: "1.2rem", color: "#ffffff", fontWeight: "800", display: "flex", alignItems: "center", gap: "10px" }}>
+                      <span>🐾</span> Pet Inventory & Catalog Management
+                    </h3>
+                    <p style={{ margin: "4px 0 0", fontSize: "0.86rem", color: "#94a3b8" }}>
+                      Add new animals, update adoption availability, or remove pet profiles in real time.
+                    </p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={handleOpenAddPetModal}
+                    style={{
+                      background: "#ea580c",
+                      color: "#ffffff",
+                      border: "none",
+                      borderRadius: "8px",
+                      padding: "12px 24px",
+                      fontSize: "0.95rem",
+                      fontWeight: "800",
+                      fontFamily: "var(--admin-font)",
+                      cursor: "pointer",
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "8px",
+                      boxShadow: "0 4px 14px rgba(234, 88, 12, 0.4)",
+                      transition: "all 0.15s ease",
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.background = "#c2410c";
+                      e.currentTarget.style.transform = "translateY(-1px)";
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.background = "#ea580c";
+                      e.currentTarget.style.transform = "none";
+                    }}
+                  >
+                    <span style={{ fontSize: "1.2rem" }}>➕</span>
+                    <span>Add New Pet</span>
+                  </button>
+                </div>
+
                 {filteredPets.length === 0 ? (
                   <div className="empty-state">
                     <div className="empty-icon">🐾</div>
                     <h3>No Pets Found</h3>
                     <p>No platform animals matched your breed or category search.</p>
-                    {isFilterActive && (
+                    <div style={{ display: "flex", gap: "10px", justifyContent: "center", marginTop: "14px" }}>
                       <button
-                        onClick={handleResetFilters}
-                        className="export-btn"
-                        style={{ marginTop: "12px", display: "inline-flex" }}
+                        type="button"
+                        onClick={handleOpenAddPetModal}
+                        style={{
+                          background: "#ea580c",
+                          color: "#ffffff",
+                          border: "none",
+                          borderRadius: "8px",
+                          padding: "10px 20px",
+                          fontWeight: "800",
+                          cursor: "pointer",
+                        }}
                       >
-                        Clear Filters
+                        ➕ Add Pet Now
                       </button>
-                    )}
+                      {isFilterActive && (
+                        <button
+                          onClick={handleResetFilters}
+                          className="export-btn"
+                        >
+                          Clear Filters
+                        </button>
+                      )}
+                    </div>
                   </div>
                 ) : (
                   <>
                     <table className="data-table">
                       <thead>
                         <tr>
-                          <th>Pet Details</th>
+                          <th>Photo</th>
                           <th>Pet ID</th>
                           <th>Category</th>
                           <th>Breed</th>
                           <th>Age / Gender</th>
                           <th>Inquiries</th>
                           <th>Status</th>
-                          <th>Actions</th>
+                          <th style={{ textAlign: "center" }}>Actions</th>
                         </tr>
                       </thead>
                       <tbody>
@@ -2671,52 +2506,62 @@ export default function AdminPage() {
                           return (
                             <tr key={pet.id || idx}>
                               <td>
-                                <div className="user-cell">
-                                  <img
-                                    src={pet.img || "/dog1.jpg"}
-                                    alt={pet.name}
-                                    style={{
-                                      width: "44px",
-                                      height: "44px",
-                                      borderRadius: "8px",
-                                      objectFit: "cover",
-                                      border: "1.5px solid #e2e8f0",
-                                    }}
-                                  />
-                                  <div>
-                                    <strong style={{ color: "#0f172a", fontSize: "0.95rem" }}>{pet.name}</strong>
-                                    {pet.size && <div style={{ fontSize: "0.72rem", color: "#64748b" }}>{pet.size} Size</div>}
-                                  </div>
-                                </div>
+                                <img
+                                  src={pet.img || (pet.type === "Cat" ? "/cat1.jpg" : "/dog1.jpg")}
+                                  alt={pet.breed}
+                                  style={{
+                                    width: "50px",
+                                    height: "50px",
+                                    borderRadius: "10px",
+                                    objectFit: "cover",
+                                    border: "1.5px solid #cbd5e1",
+                                    boxShadow: "0 2px 4px rgba(0,0,0,0.06)",
+                                  }}
+                                />
                               </td>
                               <td>
-                                <span className="badge badge-pet">{pet.id}</span>
+                                <span className="badge-pet">{pet.id}</span>
                               </td>
                               <td>
                                 <span
-                                  className="badge"
                                   style={{
-                                    background: pet.type === "Dog" ? "#fff7ed" : "#f0f9ff",
-                                    color: pet.type === "Dog" ? "#c2410c" : "#0284c7",
-                                    border: pet.type === "Dog" ? "1px solid #fed7aa" : "1px solid #bae6fd",
+                                    display: "inline-flex",
+                                    alignItems: "center",
+                                    gap: "5px",
+                                    padding: "4px 10px",
+                                    borderRadius: "20px",
+                                    fontSize: "0.78rem",
+                                    fontWeight: "800",
+                                    background: pet.type === "Dog" ? "#fff7ed" : "#eff6ff",
+                                    color: pet.type === "Dog" ? "#c2410c" : "#1d4ed8",
+                                    border: pet.type === "Dog" ? "1.5px solid #fed7aa" : "1.5px solid #bfdbfe",
                                   }}
                                 >
                                   {pet.type === "Dog" ? "🐕 Dog" : "🐱 Cat"}
                                 </span>
                               </td>
                               <td>
-                                <span style={{ fontWeight: "600", color: "#334155" }}>{pet.breed}</span>
+                                <strong style={{ color: "#0f172a", fontSize: "0.95rem" }}>{pet.breed}</strong>
+                                {pet.size && <div style={{ fontSize: "0.76rem", color: "#64748b", marginTop: "2px" }}>{pet.size} Size</div>}
                               </td>
                               <td>
-                                <span style={{ color: "#64748b" }}>{pet.age} {pet.gender ? `• ${pet.gender}` : ""}</span>
+                                <span style={{ color: "#334155", fontWeight: "700" }}>
+                                  {pet.age} {pet.gender ? `• ${pet.gender}` : ""}
+                                </span>
                               </td>
                               <td>
                                 <span
-                                  className="badge"
                                   style={{
+                                    display: "inline-flex",
+                                    alignItems: "center",
+                                    gap: "4px",
+                                    padding: "4px 10px",
+                                    borderRadius: "20px",
+                                    fontSize: "0.78rem",
+                                    fontWeight: "700",
                                     background: inquiryCount > 0 ? "#fef3c7" : "#f1f5f9",
-                                    color: inquiryCount > 0 ? "#92400e" : "#64748b",
-                                    border: inquiryCount > 0 ? "1px solid #fde68a" : "1px solid #e2e8f0",
+                                    color: inquiryCount > 0 ? "#92400e" : "#475569",
+                                    border: inquiryCount > 0 ? "1.5px solid #fde68a" : "1px solid #cbd5e1",
                                   }}
                                 >
                                   🐾 {inquiryCount} {inquiryCount === 1 ? "Inquiry" : "Inquiries"}
@@ -2727,6 +2572,17 @@ export default function AdminPage() {
                                   value={pet.status || "available"}
                                   onChange={(e) => handleUpdatePetStatus(pet, e.target.value)}
                                   className="status-changer-select"
+                                  style={{
+                                    background:
+                                      pet.status === "available" ? "#ecfdf5" :
+                                      pet.status === "pending" ? "#fffbeb" : "#eff6ff",
+                                    color:
+                                      pet.status === "available" ? "#047857" :
+                                      pet.status === "pending" ? "#b45309" : "#1d4ed8",
+                                    borderColor:
+                                      pet.status === "available" ? "#6ee7b7" :
+                                      pet.status === "pending" ? "#fcd34d" : "#93c5fd",
+                                  }}
                                 >
                                   <option value="available">🟢 Available</option>
                                   <option value="pending">🟡 Pending</option>
@@ -2734,7 +2590,7 @@ export default function AdminPage() {
                                 </select>
                               </td>
                               <td>
-                                <div className="action-buttons-cell">
+                                <div className="action-buttons-cell" style={{ justifyContent: "center" }}>
                                   <button
                                     onClick={() => handleOpenEditPetModal(pet)}
                                     className="action-link-btn"
@@ -2994,7 +2850,7 @@ export default function AdminPage() {
         <div className="admin-modal-overlay" onClick={() => setPetModalOpen(false)}>
           <div className="admin-modal-card" style={{ maxWidth: "520px" }} onClick={(e) => e.stopPropagation()}>
             <div className="admin-modal-header">
-              <h3>{editingPet ? `✏️ Edit Pet: ${editingPet.name}` : "🐾 Add New Animal to Catalog"}</h3>
+              <h3>{editingPet ? `✏️ Edit Pet: ${editingPet.breed} (${editingPet.id})` : "🐾 Add New Animal to Catalog"}</h3>
               <button className="modal-close-icon" onClick={() => setPetModalOpen(false)}>
                 ✕
               </button>
@@ -3003,20 +2859,6 @@ export default function AdminPage() {
             <form onSubmit={handleSavePet}>
               <div className="admin-modal-body" style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
                 <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px" }}>
-                  <div>
-                    <label style={{ display: "block", fontSize: "0.78rem", fontWeight: "700", marginBottom: "4px" }}>
-                      Pet Name *
-                    </label>
-                    <input
-                      type="text"
-                      required
-                      placeholder="e.g. Bella"
-                      value={petFormData.name}
-                      onChange={(e) => setPetFormData({ ...petFormData, name: e.target.value })}
-                      style={{ width: "100%", padding: "8px 10px", borderRadius: "6px", border: "1px solid #cbd5e1", boxSizing: "border-box" }}
-                    />
-                  </div>
-
                   <div>
                     <label style={{ display: "block", fontSize: "0.78rem", fontWeight: "700", marginBottom: "4px" }}>
                       Category / Type *
@@ -3030,9 +2872,7 @@ export default function AdminPage() {
                       <option value="Cat">🐱 Cat</option>
                     </select>
                   </div>
-                </div>
 
-                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px" }}>
                   <div>
                     <label style={{ display: "block", fontSize: "0.78rem", fontWeight: "700", marginBottom: "4px" }}>
                       Breed *
@@ -3040,13 +2880,15 @@ export default function AdminPage() {
                     <input
                       type="text"
                       required
-                      placeholder="e.g. Golden Retriever"
+                      placeholder="e.g. Golden Retriever, Labrador..."
                       value={petFormData.breed}
-                      onChange={(e) => setPetFormData({ ...petFormData, breed: e.target.value })}
+                      onChange={(e) => setPetFormData({ ...petFormData, breed: e.target.value, name: e.target.value })}
                       style={{ width: "100%", padding: "8px 10px", borderRadius: "6px", border: "1px solid #cbd5e1", boxSizing: "border-box" }}
                     />
                   </div>
+                </div>
 
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px" }}>
                   <div>
                     <label style={{ display: "block", fontSize: "0.78rem", fontWeight: "700", marginBottom: "4px" }}>
                       Age *
@@ -3054,15 +2896,13 @@ export default function AdminPage() {
                     <input
                       type="text"
                       required
-                      placeholder="e.g. 2 years"
+                      placeholder="e.g. 2 years, 6 months..."
                       value={petFormData.age}
                       onChange={(e) => setPetFormData({ ...petFormData, age: e.target.value })}
                       style={{ width: "100%", padding: "8px 10px", borderRadius: "6px", border: "1px solid #cbd5e1", boxSizing: "border-box" }}
                     />
                   </div>
-                </div>
 
-                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "12px" }}>
                   <div>
                     <label style={{ display: "block", fontSize: "0.78rem", fontWeight: "700", marginBottom: "4px" }}>
                       Gender
@@ -3076,7 +2916,9 @@ export default function AdminPage() {
                       <option value="Female">Female</option>
                     </select>
                   </div>
+                </div>
 
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px" }}>
                   <div>
                     <label style={{ display: "block", fontSize: "0.78rem", fontWeight: "700", marginBottom: "4px" }}>
                       Size

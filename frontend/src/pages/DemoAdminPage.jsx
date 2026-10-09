@@ -3,16 +3,16 @@ import { Link } from "react-router-dom";
 import "./AdminPage.css";
 
 const PLATFORM_PETS = [
-  { id: "DOG-101", name: "Labrador", breed: "Labrador", type: "Dog", age: "3 years", img: "/dog1.jpg" },
-  { id: "DOG-102", name: "German Shepherd", breed: "German Shepherd", type: "Dog", age: "2 years", img: "/dog2.jpg" },
-  { id: "DOG-103", name: "Beagle", breed: "Beagle", type: "Dog", age: "4 years", img: "/dog3.jpg" },
-  { id: "DOG-104", name: "Bulldog", breed: "Bulldog", type: "Dog", age: "3 years", img: "/dog4.jpg" },
-  { id: "DOG-105", name: "Poodle", breed: "Poodle", type: "Dog", age: "2 years", img: "/dog5.jpg" },
-  { id: "DOG-106", name: "Golden Retriever", breed: "Golden Retriever", type: "Dog", age: "1 year", img: "/dog6.jpg" },
-  { id: "CAT-101", name: "Persian Cat", breed: "Persian Cat", type: "Cat", age: "2 years", img: "/cat1.jpg" },
-  { id: "CAT-102", name: "Siamese Cat", breed: "Siamese Cat", type: "Cat", age: "1.5 years", img: "/cat2.jpg" },
-  { id: "CAT-103", name: "Maine Coon", breed: "Maine Coon", type: "Cat", age: "3 years", img: "/cat3.jpg" },
-  { id: "CAT-104", name: "British Shorthair", breed: "British Shorthair", type: "Cat", age: "2 years", img: "/cat4.jpg" },
+  { id: "DOG-101", breed: "Labrador Retriever", type: "Dog", age: "3 years", img: "/dog1.jpg" },
+  { id: "DOG-102", breed: "German Shepherd", type: "Dog", age: "2 years", img: "/dog2.jpg" },
+  { id: "DOG-103", breed: "Beagle", type: "Dog", age: "4 years", img: "/dog3.jpg" },
+  { id: "DOG-104", breed: "Bulldog", type: "Dog", age: "3 years", img: "/dog4.jpg" },
+  { id: "DOG-105", breed: "Poodle", type: "Dog", age: "2 years", img: "/dog5.jpg" },
+  { id: "DOG-106", breed: "Golden Retriever", type: "Dog", age: "1 year", img: "/dog6.jpg" },
+  { id: "CAT-101", breed: "Persian Cat", type: "Cat", age: "2 years", img: "/cat1.jpg" },
+  { id: "CAT-102", breed: "Siamese Cat", type: "Cat", age: "1.5 years", img: "/cat2.jpg" },
+  { id: "CAT-103", breed: "Maine Coon", type: "Cat", age: "3 years", img: "/cat3.jpg" },
+  { id: "CAT-104", breed: "British Shorthair", type: "Cat", age: "2 years", img: "/cat4.jpg" },
 ];
 
 const INITIAL_DEMO_DATA = {
@@ -363,9 +363,8 @@ export default function DemoAdminPage() {
       const pName = (a.petName || "").toLowerCase();
       PLATFORM_PETS.forEach((pet) => {
         if (
-          pName.includes(pet.name.toLowerCase()) ||
-          pName.includes(pet.id.toLowerCase()) ||
-          pName.includes(pet.breed.toLowerCase())
+          (pet.id && pName.includes(pet.id.toLowerCase())) ||
+          (pet.breed && pName.includes(pet.breed.toLowerCase()))
         ) {
           map[pet.id] = (map[pet.id] || 0) + 1;
         }
@@ -1141,7 +1140,7 @@ export default function DemoAdminPage() {
 
                     <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
                       {PLATFORM_PETS.slice(0, 5).map((pet, idx) => {
-                        const count = petDemandMap[pet.name] || 0;
+                        const count = petDemandMap[pet.id] || 0;
                         return (
                           <div
                             key={idx}
@@ -1158,12 +1157,12 @@ export default function DemoAdminPage() {
                             <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
                               <img
                                 src={pet.img}
-                                alt={pet.name}
+                                alt={pet.breed}
                                 style={{ width: "36px", height: "36px", borderRadius: "6px", objectFit: "cover" }}
                               />
                               <div>
-                                <strong style={{ color: "var(--brand-dark)", fontSize: "0.85rem" }}>{pet.name}</strong>
-                                <div style={{ fontSize: "0.75rem", color: "var(--brand-muted)" }}>{pet.breed} • {pet.age}</div>
+                                <strong style={{ color: "var(--brand-dark)", fontSize: "0.85rem" }}>{pet.breed}</strong>
+                                <div style={{ fontSize: "0.75rem", color: "var(--brand-muted)" }}>{pet.id} • {pet.age}</div>
                               </div>
                             </div>
                             <span
@@ -1609,14 +1608,14 @@ export default function DemoAdminPage() {
                   const inquiryCount = petDemandMap[pet.id] || 0;
                   return (
                     <div key={idx} className="admin-pet-card">
-                      <img src={pet.img} alt={pet.name} className="admin-pet-img" />
+                      <img src={pet.img} alt={pet.breed} className="admin-pet-img" />
                       <div className="admin-pet-info">
                         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: "6px" }}>
-                          <div className="admin-pet-name">{pet.name}</div>
+                          <div className="admin-pet-name">{pet.breed}</div>
                           <span className="pet-id-tag" style={{ margin: 0 }}>{pet.id}</span>
                         </div>
                         <div className="admin-pet-meta">
-                          {pet.breed} • {pet.age} ({pet.type})
+                          {pet.age} • {pet.type}
                         </div>
                         <div className="admin-pet-demand">
                           <span>🐾 {inquiryCount} Adoption {inquiryCount === 1 ? "Inquiry" : "Inquiries"}</span>
